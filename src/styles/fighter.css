@@ -1,0 +1,135 @@
+.fighter-profile {
+  padding-top: var(--header-height);
+  min-height: 100vh;
+}
+
+.fighter-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 48px;
+  align-items: end;
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.fighter-photo-wrapper {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--charcoal-light);
+  border: 1px solid var(--border);
+}
+
+.fighter-photo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fighter-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.fighter-details { padding-bottom: 16px; }
+
+.fighter-rank-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.fighter-division-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  transition: color var(--transition-fast);
+}
+
+.fighter-division-link:hover { color: var(--gold); }
+
+.fighter-name {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.fighter-nickname {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.fighter-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.fighter-stat {
+  padding: 16px;
+  background: var(--surface);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.fighter-stat-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.fighter-stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.fighter-bio {
+  padding: 48px 0;
+  max-width: 720px;
+}
+
+.fighter-bio h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+}
+
+.fighter-bio p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .fighter-hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 0;
+  }
+  .fighter-photo-wrapper {
+    max-width: 250px;
+    margin: 0 auto;
+  }
+  .fighter-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}

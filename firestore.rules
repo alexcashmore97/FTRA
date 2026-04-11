@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Divisions: public read, admin write
+    match /divisions/{divisionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Fighters: public read, admin full write, fighter can edit own profile
+    match /fighters/{fighterId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || isOwner(resource.data.uid);
+    }
+
+    // Admins: only admins can read/write
+    match /admins/{adminId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Helper: check if request user is an admin
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Helper: check if request user owns this fighter profile
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

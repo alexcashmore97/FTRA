@@ -1,0 +1,109 @@
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { getDivisionById, getDivisionsByGender } from '@/lib/divisions';
+import { getFightersByDivision } from '@/lib/fighters';
+import type { Fighter } from '@/lib/types';
+import RankingRow from '@/components/RankingRow';
+
+export default function DivisionRankingsPage() {
+  const { divisionId } = useParams<{ divisionId: string }>();
+  const division = getDivisionById(divisionId ?? '');
+
+  const [fighters, setFighters] = useState<Fighter[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!division) return;
+    setLoading(true);
+    setError(null);
+    getFightersByDivision(division.id)
+      .then(setFighters)
+      .catch(() => setError('Failed to load rankings.'))
+      .finally(() => setLoading(false));
+  }, [division?.id]);
+
+  if (!division) {
+    return (
+      <div className="rankings-page">
+        <div className="container">
+          <h1>Division not found</h1>
+          <Link to="/" className="btn btn-outline" style={{ marginTop: '24px' }}>
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const genderDivisions = getDivisionsByGender(division.gender);
+  const champion = fighters.find(f => f.titleHolder);
+  const ranked = fighters
+    .filter(f => !f.titleHolder && f.rank !== null)
+    .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+
+  return (
+    <div className="rankings-page">
+      {/* Division hero banner */}
+      <div className="rankings-banner">
+        <img src={division.image} alt={division.name} className="rankings-banner-img" />
+        <div className="rankings-banner-overlay" />
+      </div>
+
+      <div className="container">
+        <div className="rankings-header">
+          <div className="rankings-gender-tabs">
+            <Link
+              to={`/rankings/${division.gender === 'male' ? division.id : division.id.replace('female-', 'male-')}`}
+              className={`gender-tab ${division.gender === 'male' ? 'active' : ''}`}
+            >
+              Male
+            </Link>
+            <Link
+              to={`/rankings/${division.gender === 'female' ? division.id : division.id.replace('male-', 'female-')}`}
+              className={`gender-tab ${division.gender === 'female' ? 'active' : ''}`}
+            >
+              Female
+            </Link>
+          </div>
+          <div className="rankings-division-title">
+            <h1>{division.name}</h1>
+            <span className="weight">{division.weight}</span>
+          </div>
+        </div>
+
+        {/* Quick-nav pills */}
+        <div className="division-pills">
+          {genderDivisions.map(d => (
+            <Link
+              key={d.id}
+              to={`/rankings/${d.id}`}
+              className={`division-pill ${d.id === division.id ? 'active' : ''}`}
+            >
+              {d.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Rankings */}
+        <div className="ranking-list">
+          {loading && <div className="empty-state">Loading rankings...</div>}
+          {error && <div className="empty-state">{error}</div>}
+          {!loading && !error && (
+            <>
+              {champion && <RankingRow fighter={champion} />}
+              {ranked.map(fighter => (
+                <RankingRow key={fighter.id} fighter={fighter} />
+              ))}
+              {fighters.length === 0 && (
+                <div className="empty-state">
+                  No ranked fighters in this division yet.
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

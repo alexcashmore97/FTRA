@@ -1,0 +1,154 @@
+/* ========================================
+   Auth Pages — Login / Portal
+   ======================================== */
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height) - 200px);
+  padding: 60px var(--container-padding);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--charcoal);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 48px 40px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.auth-header h2 {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.auth-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+
+.admin-badge {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--black);
+}
+
+.fighter-badge {
+  background: var(--red);
+  color: var(--text-on-red);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-error {
+  padding: 12px 16px;
+  background: rgba(230, 57, 70, 0.1);
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  border-radius: 4px;
+  color: var(--red);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Loading Screen ---- */
+
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height));
+}
+
+.auth-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: auth-spin 0.8s linear infinite;
+}
+
+@keyframes auth-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Logged-in User Bar (Header) ---- */
+
+.auth-user-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-user-role {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+.auth-user-role.admin {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--black);
+}
+
+.auth-user-role.fighter {
+  background: var(--red);
+  color: var(--text-on-red);
+}
+
+.auth-logout-btn {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+
+.auth-logout-btn:hover {
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 36px 24px;
+  }
+}

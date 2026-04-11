@@ -1,0 +1,520 @@
+{
+  "male_divisions": {
+    "super_bantamweight_55kg": {
+      "og_image": "images/male-division/super-bantamweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Corey Nicholson", "gym": "The Iron Fist Gym, QLD", "title": "WBC World Champion"},
+        {"rank": 2, "name": "Cale Wild", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 3, "name": "Kenta Sawa", "gym": "Supafight, VIC", "title": "WBC Australian Champion"},
+        {"rank": 4, "name": "Moo Doh", "gym": "The Pit, WA"},
+        {"rank": 5, "name": "Bailey Collins", "gym": "Machete Muay Thai, NSW", "title": "WBC NSW State Champion"},
+        {"rank": 6, "name": "Fahed Haidar", "gym": "Fight Works, NSW"},
+        {"rank": 7, "name": "Jake Green", "gym": "Mulisha, QLD", "title": "WBC QLD State Champion"},
+        {"rank": 8, "name": "Kevin Lu", "gym": "Hongthong Muay Thai, VIC"},
+        {"rank": 9, "name": "Isaiah Badato", "gym": "Full Force Gym, NSW"},
+        {"rank": 10, "name": "Charlie Cochrane", "gym": "Cool Heart Muay Thai, VIC"},
+        {"rank": 11, "name": "Myles Pressley", "gym": "Pretty Top Team, QLD"},
+        {"rank": 12, "name": "Derry Mark", "gym": "Strongheart, SA"},
+        {"rank": 13, "name": "Matt Cheti", "gym": "Westside MMA, VIC"},
+        {"rank": 14, "name": "Salvatore Britti", "gym": "Oneal's Gym, VIC"},
+        {"rank": 15, "name": "Patrick Lilly", "gym": "Third Eye Muay Thai, NSW"}
+      ]
+    },
+    "featherweight_57kg": {
+      "og_image": "images/male-division/featherweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Petchumpon Rama1", "gym": "Rama1, VIC"},
+        {"rank": 2, "name": "Adam Kaewphaluk", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 3, "name": "Michael Lamrock", "gym": "Jai Yen Muay Thai Gym, QLD"},
+        {"rank": 4, "name": "Matty Clark", "gym": "Jai Yen Muay Thai Gym, QLD", "title": "WBC Australian Champion"},
+        {"rank": 5, "name": "Cale Wild", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 6, "name": "Kenta Sawa", "gym": "Supafight, VIC"},
+        {"rank": 7, "name": "Fahed Haidar", "gym": "Fightworks, NSW"},
+        {"rank": 8, "name": "Ollie Knott", "gym": "Taylormade Muay Thai, QLD", "title": "WBC QLD State Champion"},
+        {"rank": 9, "name": "Jason Huynh", "gym": "Honour Martial Arts, VIC", "title": "WBC VIC State Champion"},
+        {"rank": 10, "name": "Isaiah Badato", "gym": "Fullforce Gym, NSW"},
+        {"rank": 11, "name": "Patrick Lilly", "gym": "Third Eye Muay Thai, NSW"},
+        {"rank": 12, "name": "Ben Wilson", "gym": "Sabai Muay Thai, QLD"},
+        {"rank": 13, "name": "Quang Le", "gym": "Strongheart Muay Thai, SA"},
+        {"rank": 14, "name": "Alex Taylor", "gym": "168 Muay Thai, VIC"},
+        {"rank": 15, "name": "Dylan Mungcal", "gym": "Boonchu Gym, QLD"},
+        {"rank": 16, "name": "Luca Camilleri", "gym": "Levels Fight and Fitness, QLD"},
+        {"rank": 17, "name": "Caleb Purkiss", "gym": "Third Eye Muay Thai, NSW"},
+        {"rank": 18, "name": "Keanu Friend", "gym": "Monarch Muay Thai, VIC"},
+        {"rank": 19, "name": "Marcus Zanuttini", "gym": "Voodoo Combat, QLD"},
+        {"rank": 20, "name": "Bailey Gale", "gym": "Dominance Thomas Town, VIC"}
+      ]
+    },
+    "super_featherweight_58kg": {
+      "og_image": "images/male-division/super-featherweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Josh McCulloch", "gym": "Chaffey's Martial Arts, NSW"},
+        {"rank": 2, "name": "Ibrahim Abou Saleh", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 3, "name": "James Kostic", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 4, "name": "Brandon Spain", "gym": "Spain's Gym, QLD"},
+        {"rank": 5, "name": "Adam Kaewphaluek", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 6, "name": "Reece Corrigan", "gym": "Suay Muay Thai, WA"},
+        {"rank": 7, "name": "Anthony Gilbert", "gym": "Frontline, SA"},
+        {"rank": 8, "name": "Brock Rowley", "gym": "Muay U, ACT"},
+        {"rank": 9, "name": "Iskander Urbisinov", "gym": "Riddlers Gym, WA"},
+        {"rank": 10, "name": "Shawah Jin", "gym": "Lovett Muay Thai, WA"},
+        {"rank": 11, "name": "Van Phan", "gym": "Oneal's Gym, VIC"},
+        {"rank": 12, "name": "Conor Goodman", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 13, "name": "Matt Packer", "gym": "Supafight, VIC"},
+        {"rank": 14, "name": "Matty Clark", "gym": "Jai Yen Muay Thai Gym, QLD"},
+        {"rank": 15, "name": "Pierre Doueihi", "gym": "SRG Muay Thai, NSW"},
+        {"rank": 16, "name": "Aidan Godfrey", "gym": "Boars Martial Arts, SA"},
+        {"rank": 17, "name": "Enrico Leasa", "gym": "Rungchai M-60 Muay Thai, NSW"},
+        {"rank": 18, "name": "Chris Broadley", "gym": "Oneal's Gym, VIC"},
+        {"rank": 19, "name": "Christopher Close", "gym": "Honour Martial Arts, VIC"},
+        {"rank": 20, "name": "Amir Rezai", "gym": "Morakot, VIC"},
+        {"rank": 21, "name": "Jaeger Rogerson", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 22, "name": "Cruize Hollingdale", "gym": "ATG Muay Thai, VIC"},
+        {"rank": 23, "name": "Keanu Friend", "gym": "Monarch Muay Thai, VIC"},
+        {"rank": 24, "name": "Quang Le", "gym": "Strongheart, SA"},
+        {"rank": 25, "name": "Ethan Nhan", "gym": "Sukhari Muay Thai"},
+        {"rank": 26, "name": "Max Tzambazis", "gym": "8 Blade Warriors"}
+      ]
+    },
+    "lightweight_61kg": {
+      "og_image": "images/male-division/lightweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Singnoom", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 2, "name": "Jack Matthews", "gym": "Muay Thai Lab, VIC"},
+        {"rank": 3, "name": "Reece Corrigan", "gym": "Suay Muay Thai, WA"},
+        {"rank": 4, "name": "Jayden Staiti", "gym": "Strikeforce, QLD"},
+        {"rank": 5, "name": "Anthony Gilbert", "gym": "Frontline Muay Thai, SA"},
+        {"rank": 6, "name": "Sunny Mawer", "gym": "Fight Academy, QLD"},
+        {"rank": 7, "name": "Connor Gillen", "gym": "Mulisha, WA"},
+        {"rank": 8, "name": "David Borg", "gym": "Methodical Muay Thai, QLD"},
+        {"rank": 9, "name": "Kye Larucci", "gym": "Machete Muay Thai"},
+        {"rank": 10, "name": "Kai Matsuda", "gym": "Strongheart, SA"},
+        {"rank": 11, "name": "Buddy Hanlon", "gym": "Third Eye Muay Thai, NSW"},
+        {"rank": 12, "name": "Kiw Eikkasit", "gym": "Eikkasit Muay Thai, VIC"},
+        {"rank": 13, "name": "Van Phan", "gym": "Oneals Gym, VIC"},
+        {"rank": 14, "name": "Vinay Lim", "gym": "Strike Studios, VIC"},
+        {"rank": 15, "name": "Loui Boubis", "gym": "Oneal's Gym, VIC"},
+        {"rank": 16, "name": "Ethan Armitage", "gym": "Honour Martial Arts Academy, QLD"},
+        {"rank": 17, "name": "Conor Goodman", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 18, "name": "James Gifford", "gym": "Riddlers, WA"},
+        {"rank": 19, "name": "Mark Standing", "gym": "Solace Muay Thai, NSW"},
+        {"rank": 20, "name": "Gabriel Ronquillo", "gym": "Kao Sok, WA"},
+        {"rank": 21, "name": "Iskander Urbisnov", "gym": "Riddlers, WA"},
+        {"rank": 22, "name": "Matt Diesel", "gym": "Pursuit Muay Thai, WA"},
+        {"rank": 23, "name": "Simon Lange", "gym": "Honour Martial Arts, VIC"},
+        {"rank": 24, "name": "Aidan Masone", "gym": "Young Lion's Thaiboxing, SA"},
+        {"rank": 25, "name": "Shaq Sallie", "gym": "Monsters Inc, WA"},
+        {"rank": 26, "name": "Jordan Henry", "gym": "Fight Works, QLD"},
+        {"rank": 27, "name": "Jaeger Rogerson", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 28, "name": "Nathan Giles", "gym": "8 Blades, VIC"},
+        {"rank": 29, "name": "Kevin Pham", "gym": "The Ring Gym, VIC"},
+        {"rank": 30, "name": "Caylum Barber", "gym": "Oneal's Gym, VIC"},
+        {"rank": 31, "name": "Lucas Schwindt", "gym": "Strike Studios, VIC"},
+        {"rank": 32, "name": "Daniel Charlwood", "gym": "Double Dragon, NSW"}
+      ]
+    },
+    "super_lightweight_63_5kg": {
+      "og_image": "images/male-division/super-lightweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Chadd Collins", "gym": "Strikeforce, QLD"},
+        {"rank": 2, "name": "Josh King", "gym": "King's Muay Thai, QLD"},
+        {"rank": 3, "name": "Jayden Staiti", "gym": "Strikeforce, QLD"},
+        {"rank": 4, "name": "Nick Keros", "gym": "Strongheart, SA"},
+        {"rank": 5, "name": "Jaga Chan", "gym": "Strikeforce, QLD"},
+        {"rank": 6, "name": "Mohammad Dahlan", "gym": "187 Muay Thai, NSW"},
+        {"rank": 7, "name": "Jye Van Polen", "gym": "Boxon Muay Thai, QLD"},
+        {"rank": 8, "name": "Cian Lougheed", "gym": "The PIT, WA"},
+        {"rank": 9, "name": "Ben Higgins", "gym": "Oneal's Gym, VIC"},
+        {"rank": 10, "name": "Nathan Jones Jr", "gym": "Nova Martial Arts, NSW"},
+        {"rank": 11, "name": "Jack Matthews", "gym": "Muay Thai Lab, VIC"},
+        {"rank": 12, "name": "Suliman Hashemi", "gym": "Oakleigh Youth Club, VIC"},
+        {"rank": 13, "name": "Andy Mera", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 14, "name": "Quang Pham", "gym": "Strike Studios, VIC"},
+        {"rank": 15, "name": "Keiarn Carr Bannam", "gym": "Gladiator, VIC"},
+        {"rank": 16, "name": "Ben Killian", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 17, "name": "Kai Matsuda", "gym": "Nukzu Muay Thai, QLD"},
+        {"rank": 18, "name": "Louis Boubis", "gym": "Oneal's Gym, VIC"},
+        {"rank": 19, "name": "Zac Lecarre-Covill", "gym": "Ascension Muay Thai, QLD"},
+        {"rank": 20, "name": "Max Milne", "gym": "Riddlers, WA"},
+        {"rank": 21, "name": "Jake Heavey", "gym": "Oneal's Gym, VIC"},
+        {"rank": 22, "name": "Luke Di Scerni", "gym": "Riddlers Gym, WA"},
+        {"rank": 23, "name": "Eli MacDonald", "gym": "Double Dose Muay Thai, QLD"},
+        {"rank": 24, "name": "Jordan Stewart", "gym": "ACSA, VIC"}
+      ]
+    },
+    "welterweight_66kg": {
+      "og_image": "images/male-division/welterweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Max McVicker", "gym": "Muay U, ACT"},
+        {"rank": 2, "name": "Albert Tu'ua", "gym": "Fight World, QLD"},
+        {"rank": 3, "name": "Ramesh Habib", "gym": "Headhunters Gym, VIC"},
+        {"rank": 4, "name": "Cas Haberfield", "gym": "Fight Academy Australia, QLD"},
+        {"rank": 5, "name": "Petch Sitmonchai", "gym": "Rama1, VIC"},
+        {"rank": 6, "name": "Carter Lawrence", "gym": "Oneal's Gym, VIC"},
+        {"rank": 7, "name": "Josh King", "gym": "King's Muay Thai, QLD"},
+        {"rank": 8, "name": "Kai Weate-Jones", "gym": "Sitshoothon Gym, NSW", "title": "WBC Australian Champion"},
+        {"rank": 9, "name": "Jason Scott", "gym": "Team Pinky, SA"},
+        {"rank": 10, "name": "Alexi Petroulias", "gym": "ATG Muay Thai, VIC"},
+        {"rank": 11, "name": "Brandon Baresic", "gym": "The Fight Society, QLD"},
+        {"rank": 12, "name": "Billy Coulter", "gym": "BBMT, QLD"},
+        {"rank": 13, "name": "Deren Chen", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 15, "name": "Joseph Stockwell", "gym": "Riddlers Gym, WA", "title": "WBC WA State Champion"},
+        {"rank": 16, "name": "Jimme Sitmonchai", "gym": "Rama1, VIC"},
+        {"rank": 17, "name": "Corey Bartlett", "gym": "Southside Muay Thai, SA"},
+        {"rank": 18, "name": "Nilson Laki", "gym": "Monsters Inc, WA"},
+        {"rank": 19, "name": "Eli Evitt", "gym": "Strike Studios, VIC"},
+        {"rank": 20, "name": "Caleb Curley", "gym": "Pretty Top Team, QLD"},
+        {"rank": 21, "name": "Dassakorn Saton", "gym": "8 Blades, VIC"},
+        {"rank": 22, "name": "Tariq Luckens", "gym": "Strongheart, SA"},
+        {"rank": 23, "name": "Jake Heavey", "gym": "Oneal's Gym, VIC"},
+        {"rank": 24, "name": "Elias Selloum", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 25, "name": "Andrew Mitchell", "gym": "Machete Muay Thai, NSW"},
+        {"rank": 26, "name": "Jaiven Callander", "gym": "Bones MMA"}
+      ]
+    },
+    "super_welterweight_70kg": {
+      "og_image": "images/male-division/super-welterweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Jonathan Aiulu", "gym": "All Styles Gym, QLD"},
+        {"rank": 2, "name": "Damon Nelson", "gym": "Lanna Gym, WA"},
+        {"rank": 3, "name": "Luis Cajaiba", "gym": "SRG Thai Boxing, NSW"},
+        {"rank": 4, "name": "Payak Samui", "gym": "Kao Sok, WA"},
+        {"rank": 5, "name": "Carter Lawrence", "gym": "Oneal's Gym, VIC"},
+        {"rank": 6, "name": "Daniel Matthews", "gym": "Muay Thai Lab, VIC"},
+        {"rank": 7, "name": "Caleb Curley", "gym": "Pretty Top Team, QLD"},
+        {"rank": 8, "name": "Ashton Johnson", "gym": "All Styles Gym, QLD"},
+        {"rank": 9, "name": "Zack Pankhurst", "gym": "Taylormade Muay Thai, QLD", "title": "WBC QLD State Champion"},
+        {"rank": 10, "name": "Cruz Briggs", "gym": "Eastside Muay Thai, NSW"},
+        {"rank": 11, "name": "Deegan Martin", "gym": "Boxon Muay Thai Gym, QLD"},
+        {"rank": 12, "name": "Jack Spacie", "gym": "M16/Rikers, SA"},
+        {"rank": 13, "name": "Dylan Zanetti", "gym": "Strikeforce, QLD"},
+        {"rank": 14, "name": "Paul Steffens", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 15, "name": "Harry McIntyre", "gym": "Victorious Gym, QLD"},
+        {"rank": 16, "name": "Mohammad Zaid", "gym": "Technicians Thai Boxing, SA"},
+        {"rank": 17, "name": "Keelan Scott", "gym": "Oneal's Gym, VIC"},
+        {"rank": 18, "name": "Andoni Uhilia", "gym": "The Ring Gym, VIC"},
+        {"rank": 19, "name": "Mislav Horvat", "gym": "Hammers Gym, VIC"},
+        {"rank": 20, "name": "Kevin Tran", "gym": "Strike Studios"},
+        {"rank": 21, "name": "Tom Moroney", "gym": "WFC Ferntree Gully, VIC"},
+        {"rank": 22, "name": "Mervyn Shipway", "gym": "Heartout Muay Thai, QLD"},
+        {"rank": 23, "name": "Jak Rishworth", "gym": "Hanuman Muay Thai, QLD"},
+        {"rank": 24, "name": "Jason Blake", "gym": "Suay Muay Thai, WA"},
+        {"rank": 25, "name": "Jack Allen", "gym": "Strike Studios, VIC"},
+        {"rank": 26, "name": "Hamish Harper", "gym": "SMAC, VIC"}
+      ]
+    },
+    "middleweight_72kg": {
+      "og_image": "images/male-division/middleweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "David Pennimpede", "gym": "Muay U, ACT"},
+        {"rank": 2, "name": "James Honey", "gym": "Strikeforce, QLD"},
+        {"rank": 3, "name": "Damon Nelson", "gym": "Lanna Gym, WA"},
+        {"rank": 4, "name": "Jack Bennett", "gym": "8 Blades, VIC"},
+        {"rank": 5, "name": "Tome Kokerevski", "gym": "Hongthong Muay Thai, VIC"},
+        {"rank": 6, "name": "Dean Vujic", "gym": "8 Blades, VIC"},
+        {"rank": 7, "name": "Liam O'Connor", "gym": "Monsters Inc, NSW"},
+        {"rank": 8, "name": "Deegan Martin", "gym": "Boxon Muay Thai, QLD"},
+        {"rank": 9, "name": "Kevin Tran", "gym": "Strike Studios, VIC"},
+        {"rank": 10, "name": "Dylan Zanetti", "gym": "Strikeforce, QLD"},
+        {"rank": 11, "name": "Luke Fraser", "gym": "JTA Training Systems"},
+        {"rank": 12, "name": "Harry McIntyre", "gym": "Victorious Gym, QLD"},
+        {"rank": 13, "name": "Andoni Uhila", "gym": "The Ring Gym"},
+        {"rank": 14, "name": "Ash Surman", "gym": "World Fitness Cartel, VIC"},
+        {"rank": 15, "name": "Jake Piggot", "gym": "Scrappy MMA, WA"},
+        {"rank": 16, "name": "Brayden Marzona", "gym": "Courage, QLD"},
+        {"rank": 17, "name": "Cody Basso Brusa", "gym": "Riddlers Gym, WA"},
+        {"rank": 18, "name": "Jack Chalker", "gym": "Fight Academy, QLD"},
+        {"rank": 19, "name": "Zac La Sala", "gym": "Unite Muay Thai, VIC"},
+        {"rank": 20, "name": "Mislav Horvat", "gym": "Hammers Gym, VIC"},
+        {"rank": 21, "name": "Jackson Koopmans", "gym": "WFC Chirnside, VIC"},
+        {"rank": 22, "name": "Jozeff Rishworth", "gym": "Hanuman Muay Thai, QLD"},
+        {"rank": 23, "name": "Ryan Stone", "gym": "Nukzu Muay Thai, QLD"},
+        {"rank": 24, "name": "Cam Dunlop", "gym": "Dip Muay Thai, VIC"},
+        {"rank": 25, "name": "Ned Tucker", "gym": "Adelaide Muay Thai, SA"},
+        {"rank": 26, "name": "Gianni Negri", "gym": "The Ring Gym, VIC"},
+        {"rank": 27, "name": "Oli Dosljak", "gym": "Team Pink/Adelaide Kickboxing, SA"}
+      ]
+    },
+    "super_middleweight_76kg": {
+      "og_image": "images/male-division/super-middleweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "George Mann", "gym": "Riddlers Gym, WA"},
+        {"rank": 2, "name": "Nick Trask", "gym": "Heart Out Muay Thai, QLD"},
+        {"rank": 3, "name": "Meeka Michael", "gym": "Riddlers Gym, WA"},
+        {"rank": 4, "name": "Joseph Gabiola", "gym": "Soul Lab Gym, QLD"},
+        {"rank": 5, "name": "Harry Ritter", "gym": "Urban Muay Thai Gym, QLD"},
+        {"rank": 6, "name": "Jaxson Hayman", "gym": "Lukphinong Muay Thai, NT", "title": "WBC Australian Champion"},
+        {"rank": 7, "name": "Tristan Picton", "gym": "DF Gym, QLD"},
+        {"rank": 8, "name": "Shaun Curran", "gym": "Frontline Muay Thai, SA"},
+        {"rank": 9, "name": "Juan-Luc Cincotta", "gym": "Gladiator Muay Thai, VIC"},
+        {"rank": 10, "name": "Declan Goldthorpe", "gym": "Heart Out Muay Thai, QLD", "title": "WBC QLD State Champion"},
+        {"rank": 11, "name": "Ambrose Adelaide", "gym": "8 Limbs, NSW", "title": "WBC NSW State Champion"},
+        {"rank": 12, "name": "Isaiah Heilig", "gym": "Big Monkey Muay Thai, QLD"},
+        {"rank": 13, "name": "Casey Grogan-Howlett", "gym": "Spirit Muay Thai, QLD"},
+        {"rank": 14, "name": "Jesse King", "gym": "Muay Thai Mulisha, QLD"},
+        {"rank": 15, "name": "Sunny Hannath", "gym": "SMAC, VIC"},
+        {"rank": 16, "name": "Madison Ives", "gym": "Ultimate, VIC"},
+        {"rank": 18, "name": "Luke Myers", "gym": "Boars MA, SA"},
+        {"rank": 19, "name": "Kevin Tran", "gym": "Strike Studio, VIC"},
+        {"rank": 20, "name": "Jayden Wright", "gym": "Ascension Martial Arts, NSW"},
+        {"rank": 21, "name": "Jake Clayton", "gym": "Extreme MMA, VIC"},
+        {"rank": 22, "name": "Jye Thomson", "gym": "South West Muay Thai, NSW"}
+      ]
+    },
+    "light_heavyweight_79kg": {
+      "og_image": "images/male-division/light-heavyweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Charlie Bubb", "gym": "Razor Muay Thai, NSW"},
+        {"rank": 2, "name": "Jake Lund", "gym": "Lundy's Thaiboxing, QLD"},
+        {"rank": 3, "name": "Louis Abbott", "gym": "Supafight Gym, VIC"},
+        {"rank": 4, "name": "Brad Traynor", "gym": "Fight House Industries, QLD"},
+        {"rank": 5, "name": "Kyl Juler", "gym": "Mulisha, QLD"},
+        {"rank": 6, "name": "Stephan Lottering", "gym": "The Pit, WA"},
+        {"rank": 7, "name": "Cody-Trae Jameson", "gym": "Machete Muay Thai, NSW"},
+        {"rank": 8, "name": "Paul Houteas", "gym": "Eastside Muay Thai, NSW"},
+        {"rank": 9, "name": "Adrian Matthews", "gym": "Corporate Box Valley, QLD"},
+        {"rank": 10, "name": "Lachy Raeside", "gym": "Underground Muay Thai, NSW"},
+        {"rank": 11, "name": "Taylor Williams", "gym": "8 Limbs, NSW"},
+        {"rank": 12, "name": "Leroy Leondaris", "gym": "Duelmaster IFight, SA"},
+        {"rank": 13, "name": "Matthew Maher", "gym": "Third Eye Muay Thai, SA"},
+        {"rank": 14, "name": "Jon Rig", "gym": "Team Pinky, SA"},
+        {"rank": 15, "name": "Luke Bourne", "gym": "Torahod, SA"},
+        {"rank": 16, "name": "Shaun Rundle", "gym": "Heartout Muay Thai, QLD"},
+        {"rank": 17, "name": "Tully Dunn", "gym": "Eastside Muay Thai, NSW"},
+        {"rank": 18, "name": "Asha Wilson", "gym": "Corporate Box, QLD"},
+        {"rank": 19, "name": "Michael Woodward", "gym": "Ascend Martial Arts, NSW"}
+      ]
+    },
+    "cruiserweight_90kg": {
+      "og_image": "images/male-division/cruiserweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Jayden Eynaud", "gym": "Strikeforce Gym, QLD", "title": "WBC World Champion"},
+        {"rank": 2, "name": "Jesse Astill", "gym": "Strikeforce Gym, QLD"},
+        {"rank": 3, "name": "Louis Abbott", "gym": "Supafight, VIC"},
+        {"rank": 4, "name": "Paul Houteas", "gym": "Full Force Gym, NSW"},
+        {"rank": 5, "name": "Brad Davies", "gym": "Taylormade Muay Thai, QLD"},
+        {"rank": 6, "name": "Richard Dhinka", "gym": "Dominance MMA, VIC"},
+        {"rank": 7, "name": "Isaac Papali", "gym": "Contender Muay Thai"},
+        {"rank": 8, "name": "Vincent Wiktora", "gym": "Gav's Thai Boxing Gym, WA"},
+        {"rank": 9, "name": "Matthew Maher", "gym": "Third Eye Muay Thai, NSW"},
+        {"rank": 10, "name": "Brian McMahon", "gym": "8 Limbs Bondi, NSW"},
+        {"rank": 11, "name": "Jon Rig", "gym": "Team Pinky Muay Thai, SA"},
+        {"rank": 12, "name": "Najem Khattar", "gym": "XFC, VIC"}
+      ]
+    },
+    "heavyweight_91kg": {
+      "og_image": "images/male-division/heavyweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Alex Roberts", "gym": "The Pit, WA"},
+        {"rank": 2, "name": "Ashby Tink", "gym": "Wolves Den, WA", "title": "WBC Australian Champion"},
+        {"rank": 3, "name": "Blaise Taylor", "gym": "Sitshoothon, NSW"},
+        {"rank": 4, "name": "Visesio Saina", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 5, "name": "Mason Finn", "gym": "Boxon Muay Thai, QLD"},
+        {"rank": 6, "name": "Anthony Mudu", "gym": "Nukzu Muay Thai, QLD"},
+        {"rank": 7, "name": "Ben Wotherspoon", "gym": "Addiction, VIC"},
+        {"rank": 8, "name": "Gun Banlusin", "gym": "Rama1, VIC"},
+        {"rank": 9, "name": "Ryan Doyle", "gym": "VICE Training Centre, QLD"},
+        {"rank": 10, "name": "Isaac Richards", "gym": "Kachina Fight Club, SA"},
+        {"rank": 11, "name": "Mark Stansfield", "gym": "Toe 2 Toe, SA"},
+        {"rank": 12, "name": "Najem Khattar", "gym": "XFC, VIC"},
+        {"rank": 13, "name": "Josh Greenhalgh", "gym": "Beast Fight Club, VIC"}
+      ]
+    }
+  },
+  "female_divisions": {
+    "minimum_weight_45kg": {
+      "image": "images/female-division/minimum-weight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Lucille", "gym": "Taylormade Muay Thai, QLD", "title": "WBC World Champion"}
+      ]
+    },
+    "mini_flyweight_47kg": {
+      "image": "images/female-division/mini-flyweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Lucille", "gym": "Taylormade Muay Thai, QLD", "title": "WBC World Champion"},
+        {"rank": 2, "name": "Kaitlyn Vance", "gym": "Pursuit Muay Thai, WA"},
+        {"rank": 3, "name": "Shuk Yee Ho", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 4, "name": "Gabrielle De Ramos", "gym": "Muay U, ACT"},
+        {"rank": 5, "name": "Sarah Kwa", "gym": "Bioweapon Performance Centre, WA"},
+        {"rank": 6, "name": "Maddie Black", "gym": "Pursuit Muay Thai, WA"},
+        {"rank": 7, "name": "Linh Dan", "gym": "Muay U, ACT"},
+        {"rank": 8, "name": "Cindy Watts", "gym": "Nukzu, QLD"}
+      ]
+    },
+    "light_flyweight_49kg": {
+      "image": "images/female-division/light-flyweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Kim Townsend", "gym": "Mulisha, QLD", "title": "WBC World Champion"},
+        {"rank": 2, "name": "Dani Rushton", "gym": "Riddlers, WA"},
+        {"rank": 3, "name": "Kaitlyn Vance", "gym": "Pursuit Muay Thai, WA"},
+        {"rank": 4, "name": "Isabel Atchison", "gym": "SRG Muay Thai, NSW"},
+        {"rank": 5, "name": "Maddie Black", "gym": "Pursuit Muay Thai, VIC"},
+        {"rank": 6, "name": "Kalila Zylstra", "gym": "DM Muay Thai & Fitness, QLD"},
+        {"rank": 7, "name": "Reese McMaster", "gym": "Muay Thai Lab, VIC"},
+        {"rank": 8, "name": "Alisha Khadour", "gym": "168 Muay Thai, VIC"}
+      ]
+    },
+    "flyweight_50kg": {
+      "image": "images/female-division/flyweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Kim Townsend", "gym": "Mulisha, QLD"},
+        {"rank": 2, "name": "Devina Martin", "gym": "Strongheart, SA"},
+        {"rank": 3, "name": "Jane Koo", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 4, "name": "Tia Ford", "gym": "Pursuit Muay Thai, WA"},
+        {"rank": 5, "name": "Yanni Jiang", "gym": "Strike Studios, VIC"},
+        {"rank": 6, "name": "Kristina Mengarelli", "gym": "Limitless MMA, VIC"},
+        {"rank": 7, "name": "Isabel Atchison", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 8, "name": "Jasmine Riggs", "gym": "Empire Muay Thai, NSW"}
+      ]
+    },
+    "super_flyweight_52kg": {
+      "image": "images/female-division/super-flyweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Devina Martin", "gym": "Strongheart, SA"},
+        {"rank": 2, "name": "Erin Harberger", "gym": "Mulisha, QLD"},
+        {"rank": 3, "name": "Somsurat Rangkla", "gym": "8 Blades, VIC"},
+        {"rank": 4, "name": "Jane Koo", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 5, "name": "Talia Basso Brusa", "gym": "Riddlers Gym, WA"},
+        {"rank": 6, "name": "Kayla Nassis", "gym": "Sitshoothon, NSW"},
+        {"rank": 7, "name": "Helen Stiles", "gym": "The Ring Gym, VIC"},
+        {"rank": 8, "name": "Melinda Mosca", "gym": "Double Dose, QLD"},
+        {"rank": 9, "name": "Jessie Wong", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 10, "name": "Yanni Jiang", "gym": "Strike Studios, VIC"},
+        {"rank": 11, "name": "Chelsea Zaicew", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 12, "name": "Kristina Mengarelli", "gym": "Limitless, VIC"},
+        {"rank": 13, "name": "Tia Ford", "gym": "Pursuit Muay Thai, WA"},
+        {"rank": 14, "name": "Leonah Duffy", "gym": "Supafight, VIC"}
+      ]
+    },
+    "bantamweight_53kg": {
+      "image": "images/female-division/bantamweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Joanne La", "gym": "8 Blades"},
+        {"rank": 2, "name": "Erin Harberger", "gym": "Mulisha, QLD"},
+        {"rank": 3, "name": "Fon Piggot", "gym": "Gav's Thai Boxing, WA"},
+        {"rank": 4, "name": "Whitney Tuna", "gym": "Champions Gym"},
+        {"rank": 5, "name": "Marina Verrissimo", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 6, "name": "Kim Holder", "gym": "Toro Fight and Fitness, NSW"},
+        {"rank": 7, "name": "Jessie Wong", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 8, "name": "Rachel Parish", "gym": "Double Dose Muay Thai, QLD"},
+        {"rank": 9, "name": "Kayla Nassis", "gym": "Sitshoothon, NSW"},
+        {"rank": 10, "name": "Melinda Mosca", "gym": "Double Dose, QLD"},
+        {"rank": 11, "name": "Helen Stiles", "gym": "The Ring Gym, VIC"},
+        {"rank": 12, "name": "Erica Sheffield", "gym": "Champions Gym, WA"},
+        {"rank": 13, "name": "Charlia Hodgson", "gym": "Muay U, Canberra"},
+        {"rank": 14, "name": "Yanni Jiang", "gym": "Strike Studio, VIC"},
+        {"rank": 15, "name": "Lisa Duffy", "gym": "Boars Martial Arts, SA"}
+      ]
+    },
+    "super_bantamweight_55kg": {
+      "image": "images/female-division/super-bantamweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Bryony Soden", "gym": "Three Lions Gym, WA"},
+        {"rank": 2, "name": "Amanda Juniku", "gym": "Modern Warrior, QLD"},
+        {"rank": 3, "name": "Joanne La", "gym": "8 Blades, VIC"},
+        {"rank": 4, "name": "Michelle Russell", "gym": "The Ring Gym, VIC"},
+        {"rank": 5, "name": "Corban Harvey", "gym": "Ground Zero Gym, QLD"},
+        {"rank": 6, "name": "Fleur Waru", "gym": "Full Force Gym Australia, NSW"},
+        {"rank": 7, "name": "Whitney Tuna", "gym": "Champions Gym"},
+        {"rank": 8, "name": "Rachel Parish", "gym": "Double Dose Muay Thai, QLD"},
+        {"rank": 9, "name": "Holly Nguyen", "gym": "Spain's Muay Thai Gym, QLD"},
+        {"rank": 10, "name": "Kim Holder", "gym": "Toro Fight and Fitness, NSW"},
+        {"rank": 11, "name": "Samanther Maher", "gym": "Third Eye Muay Thai, NSW"},
+        {"rank": 12, "name": "Kaitlyn Halcrow", "gym": "Toro Fight and Fitness, NSW"},
+        {"rank": 13, "name": "Cheyanne Hunt", "gym": "Ironfist Gym, QLD"},
+        {"rank": 14, "name": "Melisa Castillo", "gym": "ACSA, VIC"},
+        {"rank": 15, "name": "Isabella Markos", "gym": "Strike Studios, VIC"},
+        {"rank": 16, "name": "Vanessa Bruce", "gym": "8 Blade Warriors, VIC"},
+        {"rank": 17, "name": "Allie Christie", "gym": "168 Muay Thai, VIC"},
+        {"rank": 18, "name": "Gheslaine Walters", "gym": "ACSA, VIC"},
+        {"rank": 19, "name": "Charlia Hodgson", "gym": "Muay U, ACT"},
+        {"rank": 20, "name": "Jess Lucic", "gym": "Morakot Muay Thai, VIC"},
+        {"rank": 21, "name": "Chelsea Zaicew", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 22, "name": "Ellie Tsigaras", "gym": "Rama1, VIC"}
+      ]
+    },
+    "featherweight_57kg": {
+      "image": "images/female-division/featherweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Shannon Gardiner", "gym": "Kao Sok, WA", "title": "WBC World Champion"},
+        {"rank": 2, "name": "Bryony Soden", "gym": "Three Lions Gym, WA", "title": "WBC International Champion"},
+        {"rank": 3, "name": "Dori Duncan", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 4, "name": "Corban Harvey", "gym": "Ground Zero, QLD"},
+        {"rank": 5, "name": "Kaitlin Halcrow", "gym": "Toro Fight and Fitness, NSW"},
+        {"rank": 6, "name": "Grace Allison", "gym": "Dynamis Muay Thai, NSW"},
+        {"rank": 7, "name": "Rozi Komlos", "gym": "Sitshoothon Muay Thai, NSW"},
+        {"rank": 8, "name": "Bronte Simpson Hay", "gym": "South of the Border, QLD"},
+        {"rank": 9, "name": "Nong Bee", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 10, "name": "Amanda Russell", "gym": "Bulldog Gym, QLD"},
+        {"rank": 11, "name": "Amy Glennon", "gym": "Pretty Top Team, QLD"},
+        {"rank": 12, "name": "Marissa Baker", "gym": "DMD's MMA, VIC"},
+        {"rank": 13, "name": "Fleur Waru", "gym": "Fullforce Gym, NSW"},
+        {"rank": 14, "name": "Cheyanne Hunt", "gym": "Iron Fist Gym, QLD"},
+        {"rank": 15, "name": "Isabella Markos", "gym": "Strike Studio, VIC"},
+        {"rank": 16, "name": "Lisa Duffy", "gym": "Boars Martial Arts, SA"},
+        {"rank": 17, "name": "Vanessa Bruce", "gym": "8 Blades, VIC"},
+        {"rank": 18, "name": "Rikki Preece", "gym": "Full Tilt, SA"},
+        {"rank": 19, "name": "Shawna Hoolihan", "gym": "The Den Muay Thai, QLD"},
+        {"rank": 20, "name": "Belle Berry", "gym": "Big Monkey Muay Thai, QLD"},
+        {"rank": 21, "name": "Hannah Salter", "gym": "Boars MA, SA"}
+      ]
+    },
+    "super_featherweight_59kg": {
+      "image": "images/female-division/super-featherweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Shannon Gardiner", "gym": "Kao Sok, WA", "title": "WBC World Champion"},
+        {"rank": 2, "name": "Erin Carter", "gym": "Cool Heart Muay Thai, VIC", "title": "WBC Australian Champion"},
+        {"rank": 3, "name": "Allegra Vickas", "gym": "SRG Thaiboxing, NSW", "title": "WBC NSW State Champion"},
+        {"rank": 4, "name": "Megan Montgomery-Quin", "gym": "Supafight, VIC"},
+        {"rank": 5, "name": "Paris Rose", "gym": "Monsters Inc, NSW"},
+        {"rank": 6, "name": "Rosalie Felberg", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 7, "name": "Nong Bee", "gym": "PTJ Muay Thai, NSW"},
+        {"rank": 8, "name": "Tegan Daly", "gym": "Fight World, QLD"},
+        {"rank": 9, "name": "Amanda Russell", "gym": "Bulldog Gym, NSW"},
+        {"rank": 10, "name": "Marissa Baker", "gym": "DMD's MMA, VIC"},
+        {"rank": 11, "name": "Lola Noiraud", "gym": "The Ring Gym, VIC"},
+        {"rank": 12, "name": "Kashala Rogers", "gym": "Suay Muay Thai, WA"},
+        {"rank": 13, "name": "Anna Shuttleworth", "gym": "Third Eye Muay Thai, NSW"},
+        {"rank": 14, "name": "Savannah Smith", "gym": "Bones MMA, VIC"}
+      ]
+    },
+    "lightweight_61kg": {
+      "image": "images/female-division/lightweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Katie-Rose Mitchell", "gym": "Sitshoothon, NSW"},
+        {"rank": 2, "name": "Nyra Boyle", "gym": "8 Blade Warriors, VIC"},
+        {"rank": 3, "name": "Courtney Lockley", "gym": "Riddler's Gym, WA"},
+        {"rank": 4, "name": "Erin Carter", "gym": "Cool Heart Muay Thai, VIC"},
+        {"rank": 5, "name": "Allegra Vickas", "gym": "SRG Thaiboxing, NSW"},
+        {"rank": 6, "name": "Paris Rose", "gym": "Monsters Inc, WA"},
+        {"rank": 7, "name": "Megan Montgomery-Quin", "gym": "Supafight, VIC"},
+        {"rank": 8, "name": "Olivia Kerr", "gym": "Phoenix, NSW"},
+        {"rank": 9, "name": "Brittany Thomas", "gym": "8 Blade Warriors, VIC"},
+        {"rank": 10, "name": "Rosie Felberg", "gym": "Khaoboy Muay Thai, VIC"},
+        {"rank": 11, "name": "Saskia Vaughan", "gym": "Suay Muay Thai, WA"},
+        {"rank": 12, "name": "Sienna Millar", "gym": "The PIT, WA"},
+        {"rank": 13, "name": "Bronte Simpson-Hay", "gym": "South Of The Border Muay Thai, NSW"},
+        {"rank": 14, "name": "Tess Robinson", "gym": "World Fitness Cartel, VIC"},
+        {"rank": 16, "name": "Lola Noiraud", "gym": "The Ring Gym, VIC"},
+        {"rank": 17, "name": "Jenna Poker", "gym": "Boars Martial Arts, SA"},
+        {"rank": 18, "name": "Kashala Rogers", "gym": "Suay Muay Thai, WA"}
+      ]
+    },
+    "super_lightweight_63_5kg": {
+      "image": "images/female-division/super-lightweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Zoe Putorak", "gym": "Sabai Muay Thai, ACT", "title": "WBC World Champion"},
+        {"rank": 2, "name": "Jessie Geyl", "gym": "Pretty Top Team, QLD"},
+        {"rank": 3, "name": "Holly Armstrong", "gym": "Karma Muay Thai, QLD"}
+      ]
+    },
+    "light_heavyweight_79kg": {
+      "image": "images/female-division/light-heavyweight.jpg",
+      "fighters": [
+        {"rank": 1, "name": "Tilly Bell", "gym": "Choppers Gym, ACT"},
+        {"rank": 2, "name": "Tahlia Roden", "gym": "Riddlers, WA"},
+        {"rank": 3, "name": "Jacinta Maloney", "gym": "Carbon Gym, VIC"}
+      ]
+    }
+  }
+}
