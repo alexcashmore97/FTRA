@@ -97,12 +97,13 @@
 | 6 | Fighter profile page (`/fighters/:id`) | A | DONE | `src/pages/FighterProfilePage.tsx` — photo, stats grid, bio |
 | 7 | P4P ranking page (`/rankings/p4p?gender=`) | A | DONE | `src/pages/P4PRankingsPage.tsx` — gender tabs, shows weight class per fighter |
 | 8 | Admin auth (login page + route protection) | B | DONE | `AdminLoginPage`, `AdminRoute` guard, checks `admins` collection |
-| 9 | Admin ranking manager UI | | TODO | Drag/drop or number input, auto-reorder logic |
+| 9 | Admin ranking manager UI | A | DONE | `AdminDashboardPage.tsx` + `admin.css` — division + P4P tabs, auto-reorder, batch save, champion toggle |
 | 10 | Fighter auth (login + route protection) | B | DONE | `FighterLoginPage`, `FighterRoute` guard, links uid to fighter doc, enforces own-profile-only |
-| 11 | Fighter profile editor | | TODO | Edit 5-6 fields, upload photo, write bio |
+| 11 | Fighter profile editor | A | DONE | `FighterEditorPage.tsx` + `fighter-editor.css` — edit nickname/gym/bio/stance/record/age, photo upload to Storage |
 | 12 | Nav + layout (header, footer, mobile menu) | A | DONE | `src/components/Header.tsx`, `Footer.tsx`, `Layout.tsx` — dropdown navs, mobile menu |
 | 13 | Seed sample fighter data | A | DONE | `src/lib/mockFighters.ts` — 10 fighters across divisions |
 | 14 | Contact page | A | DONE | `src/pages/ContactPage.tsx` — form with success state |
+| 15 | Fighter registration + approval workflow | A | DONE | `RegisterPage.tsx`, pending status, admin approve/reject, Firestore filters |
 
 ---
 
@@ -110,6 +111,17 @@
 
 *(latest first)*
 
+- **[Pane B — 2026-04-11]** Firebase project + full auth system:
+  - Created Firebase project `ftra-australia`, web app, `.env` with real credentials
+  - Deployed Firestore rules (public read, admin write, fighter self-edit) + Storage rules
+  - Firestore indexes added for `fighters` by division/rank and gender/p4pRank
+  - **Auth system:** `src/lib/auth.tsx` — AuthProvider with role detection (checks `admins` collection for admin, queries `fighters` by uid for fighter)
+  - **Route guards:** `src/components/ProtectedRoute.tsx` — `AdminRoute` + `FighterRoute` wrappers
+  - **Login pages:** `AdminLoginPage.tsx` (→ `/admin/login`), `FighterLoginPage.tsx` (→ `/fighter-portal/login`)
+  - **Protected pages:** `AdminDashboardPage.tsx` (→ `/admin`, placeholder), `FighterEditorPage.tsx` (→ `/fighter-portal/:id`, enforces own-profile-only)
+  - **Header:** Shows login link when logged out, role badge + portal link + logout when logged in
+  - **Security:** 3 layers — Firestore rules, route guards, component-level id check
+  - **Next:** Tasks #9 (admin ranking manager UI) and #11 (fighter profile editor) need building out — the placeholder pages are wired and protected, just need the actual UI. Also need to create a first admin user in Firebase Auth + add their uid to the `admins` Firestore collection to test the flow. Deploy Firestore indexes with `firebase deploy --only firestore:indexes`.
 - **[Pane A — 2026-04-11]** Organized all scraped assets into project structure:
   - `public/favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` — real favicons from scraped site
   - `public/images/logos/ftra-logo.png` — FTRA circular logo (used in header + footer)

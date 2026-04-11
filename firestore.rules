@@ -16,8 +16,9 @@ service cloud.firestore {
       allow update: if isAdmin() || isOwner(resource.data.uid);
     }
 
-    // Admins: only admins can read/write
+    // Admins: authenticated users can read their own doc (for role check), admins can read/write all
     match /admins/{adminId} {
+      allow read: if request.auth != null && request.auth.uid == adminId;
       allow read, write: if isAdmin();
     }
 

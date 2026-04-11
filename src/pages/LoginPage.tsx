@@ -1,21 +1,29 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth';
 import '@/styles/auth.css';
 
-export default function AdminLoginPage() {
-  const { login, user, role } = useAuth();
+export default function LoginPage() {
+  const { login, user, role, fighterId, loading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // If already logged in as admin, redirect
-  if (user && role === 'admin') {
-    navigate('/admin', { replace: true });
-    return null;
-  }
+  // Redirect once auth context resolves the role
+  useEffect(() => {
+    if (loading || !user) return;
+    if (role === 'admin') {
+      navigate('/admin', { replace: true });
+    } else if (role === 'fighter' && fighterId) {
+      navigate(`/fighter-portal/${fighterId}`, { replace: true });
+    } else if (role === null) {
+      // Authenticated but no role — reset button, show error
+      setSubmitting(false);
+      setError('Account has no role assigned. Contact an admin.');
+    }
+  }, [user, role, fighterId, loading, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -24,9 +32,6 @@ export default function AdminLoginPage() {
 
     try {
       await login(email, password);
-      // Auth state change will trigger role check in context
-      // Give it a moment to resolve role before navigating
-      setTimeout(() => navigate('/admin'), 500);
     } catch {
       setError('Invalid email or password');
       setSubmitting(false);
@@ -37,9 +42,9 @@ export default function AdminLoginPage() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-badge admin-badge">Admin</div>
-          <h2>Admin Login</h2>
-          <p className="auth-subtitle">Ranking management portal</p>
+          <div className="auth-badge fighter-badge">Portal</div>
+          <h2>Fighter Login</h2>
+          <p className="auth-subtitle">Sign in to manage your profile</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -51,7 +56,7 @@ export default function AdminLoginPage() {
               id="email"
               type="email"
               className="input"
-              placeholder="admin@ftra.com.au"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

@@ -13,10 +13,11 @@
 .auth-card {
   width: 100%;
   max-width: 420px;
-  background: var(--charcoal);
+  background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 48px 40px;
+  margin-top:60px;
 }
 
 .auth-header {
@@ -47,12 +48,12 @@
 
 .admin-badge {
   background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  color: var(--black);
+  color: #111;
 }
 
 .fighter-badge {
-  background: var(--red);
-  color: var(--text-on-red);
+  background: var(--primary);
+  color: #ffffff;
 }
 
 .auth-form {
@@ -69,10 +70,10 @@
 
 .auth-error {
   padding: 12px 16px;
-  background: rgba(230, 57, 70, 0.1);
-  border: 1px solid rgba(230, 57, 70, 0.3);
+  background: rgba(220, 50, 50, 0.1);
+  border: 1px solid rgba(220, 50, 50, 0.3);
   border-radius: 4px;
-  color: var(--red);
+  color: #dc3232;
   font-size: 0.875rem;
   text-align: center;
 }
@@ -101,7 +102,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid var(--border);
-  border-top-color: var(--red);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: auth-spin 0.8s linear infinite;
 }
@@ -129,12 +130,12 @@
 
 .auth-user-role.admin {
   background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  color: var(--black);
+  color: #111;
 }
 
 .auth-user-role.fighter {
-  background: var(--red);
-  color: var(--text-on-red);
+  background: var(--primary);
+  color: #ffffff;
 }
 
 .auth-logout-btn {
@@ -147,8 +148,20 @@
   color: var(--text-primary);
 }
 
+/* ---- Registration two-column rows ---- */
+
+.register-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
 @media (max-width: 768px) {
   .auth-card {
     padding: 36px 24px;
+  }
+
+  .register-row {
+    grid-template-columns: 1fr;
   }
 }

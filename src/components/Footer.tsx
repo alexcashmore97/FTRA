@@ -4,21 +4,31 @@ import '@/styles/footer.css';
 export default function Footer() {
   return (
     <footer className="footer">
-      <div className="container">
-        {/* Partners */}
-        <div className="footer-partners">
-          <span className="label">Official Partners</span>
-          <div className="footer-partners-logos">
-            <img src="/images/logos/wbc.avif" alt="WBC Muay Thai" className="partner-logo" />
-            <img src="/images/logos/csi.png" alt="Combat Sports Insurance" className="partner-logo" />
+      {/* Official WBC banner — full width, big deal */}
+      <div className="footer-official">
+        <div className="footer-official-inner container">
+          <img src="/images/logos/wbc.avif" alt="WBC Muay Thai Australia" className="footer-wbc-logo" />
+          <div className="footer-official-text">
+            <h3 className="footer-official-title">Official WBC Muay Thai Australia Rankings</h3>
+            <p className="footer-official-sub">
+              The only sanctioned national ranking system recognised by the World Boxing Council Muay Thai.
+            </p>
           </div>
+        </div>
+      </div>
+
+      <div className="container">
+        {/* CSI partner */}
+        <div className="footer-partners">
+          <span className="label">Insurance Partner</span>
+          <img src="/images/logos/csi.png" alt="Combat Sports Insurance" className="partner-logo" />
         </div>
 
         <div className="footer-inner">
           <div>
             <Link to="/" className="header-logo">
               <img src="/images/logos/ftra-logo.png" alt="FTRA" className="header-logo-img" />
-              <span className="accent">FTRA</span>
+              <span className="accent">Full Thai Rules Australia</span>
             </Link>
             <p className="footer-tagline">
               Shining a spotlight on the warriors of Australian Muay Thai.

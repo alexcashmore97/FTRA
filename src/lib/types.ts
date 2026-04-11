@@ -8,6 +8,7 @@ export interface Fighter {
   division: string;
   weightClass: string;
   gender: 'male' | 'female';
+  nationality: string;
   rank: number | null;
   p4pRank: number | null;
   titleHolder: boolean;
@@ -17,8 +18,10 @@ export interface Fighter {
   record: string;
   age: number | null;
   stance: string;
+  instagram: string;
   email: string;
   uid: string | null;
+  status: 'pending' | 'approved';
 }
 
 export interface AdminUser {

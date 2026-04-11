@@ -19,7 +19,10 @@ export default function DivisionRankingsPage() {
     setError(null);
     getFightersByDivision(division.id)
       .then(setFighters)
-      .catch(() => setError('Failed to load rankings.'))
+      .catch((err) => {
+        console.error('Rankings fetch error:', err);
+        setError('Failed to load rankings.');
+      })
       .finally(() => setLoading(false));
   }, [division?.id]);
 

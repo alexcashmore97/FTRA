@@ -1,43 +1,107 @@
 .footer {
-  border-top: 1px solid var(--border);
-  padding: 64px 0 32px;
   margin-top: 80px;
 }
 
-.footer-partners {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding-bottom: 48px;
-  margin-bottom: 48px;
+/* ========================================
+   Official WBC Banner
+   ======================================== */
+
+.footer-official {
+  background: linear-gradient(135deg, #f0f0f8 0%, #eaeaf2 40%, #f0ede8 100%);
+  border-top: 2px solid var(--gold);
   border-bottom: 1px solid var(--border);
+  padding: 56px 0;
+  position: relative;
+  overflow: hidden;
 }
 
-.footer-partners-logos {
+[data-theme="dark"] .footer-official {
+  background: linear-gradient(135deg, #0c1a0c 0%, #0a0a0a 40%, #1a0c0c 100%);
+}
+
+.footer-official::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
+}
+
+.footer-official::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(212, 168, 67, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.footer-official-inner {
   display: flex;
   align-items: center;
   gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-wbc-logo {
+  width: 120px;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 24px rgba(212, 168, 67, 0.15));
+}
+
+.footer-official-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.footer-official-sub {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 520px;
+}
+
+/* ========================================
+   Partners row
+   ======================================== */
+
+.footer-partners {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border);
 }
 
 .partner-logo {
-  height: 48px;
+  height: 40px;
   width: auto;
   opacity: 0.7;
   transition: opacity var(--transition-fast);
-  filter: grayscale(0.3);
 }
 
 .partner-logo:hover {
   opacity: 1;
-  filter: grayscale(0);
 }
+
+/* ========================================
+   Footer body
+   ======================================== */
 
 .footer-inner {
   display: flex;
   justify-content: space-between;
   gap: 48px;
   flex-wrap: wrap;
+  padding-top: 48px;
 }
 
 .footer-tagline {
@@ -73,12 +137,45 @@
   transition: color 150ms;
 }
 
-.footer-col a:hover { color: var(--text-primary); }
+.footer-col a:hover {
+  color: var(--text-primary);
+}
 
 .footer-bottom {
   margin-top: 48px;
   padding-top: 24px;
   border-top: 1px solid var(--border);
+  padding-bottom: 32px;
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 768px) {
+  .footer-official {
+    padding: 40px 0;
+  }
+
+  .footer-official-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .footer-wbc-logo {
+    width: 100px;
+  }
+
+  .footer-official-sub {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-partners {
+    flex-direction: column;
+    text-align: center;
+  }
 }

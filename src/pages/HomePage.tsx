@@ -16,14 +16,13 @@ export default function HomePage() {
           <img src="/images/hero/ring-atmosphere.jpg" alt="" className="hero-bg-image" />
         </div>
         <div className="hero-content">
-          <div className="hero-eyebrow">Australian Muay Thai</div>
+          <div className="hero-eyebrow">Full Thai Rules Australia</div>
           <h1 className="hero-title">
-            Where Warriors
-            <span className="highlight">Are Ranked</span>
+            Honouring the Warriors
+            <span className="highlight">of Australian Muay Thai</span>
           </h1>
           <p className="hero-subtitle">
-            The definitive ranking system for Full Thai Rules fighters across Australia.
-            Every division. Every contender. No politics.
+            At Full Thai Rules Australia, we are committed to shining a spotlight on the warriors of Australian Muay Thai. Our mission is to celebrate their dedication, skill, and sacrifices, ensuring they receive the recognition and respect they truly deserve. Through our platform, we aim to preserve the rich heritage of Muay Thai and inspire the next generation of fighters and fans alike.
           </p>
           <div className="hero-actions">
             <Link to="/rankings/p4p?gender=male" className="btn btn-primary">

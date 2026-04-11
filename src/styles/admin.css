@@ -1,0 +1,273 @@
+/* ========================================
+   Admin Dashboard
+   ======================================== */
+
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.admin-division-select {
+  margin: 16px 0 24px;
+  max-width: 360px;
+}
+
+.admin-division-select select {
+  appearance: auto;
+  cursor: pointer;
+}
+
+.admin-ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 24px;
+}
+
+.admin-ranking-row {
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: background var(--transition-fast);
+}
+
+.admin-ranking-row:hover {
+  background: var(--surface);
+}
+
+.admin-ranking-row.champion {
+  background: linear-gradient(90deg, rgba(212, 168, 67, 0.06) 0%, var(--card-bg) 100%);
+  border-color: var(--gold-dark);
+}
+
+.admin-rank-number {
+  width: 64px;
+  text-align: center;
+  padding: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.admin-rank-number::-webkit-outer-spin-button,
+.admin-rank-number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.admin-rank-number[type=number] {
+  -moz-appearance: textfield;
+}
+
+.admin-fighter-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.admin-fighter-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-fighter-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.admin-champion-btn {
+  padding: 6px 14px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.admin-champion-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.admin-champion-btn.active {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  border-color: var(--gold);
+  color: #111;
+}
+
+.admin-save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  background-color: var(--bg);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.admin-message {
+  font-size: 0.85rem;
+  color: var(--gold);
+}
+
+/* ---- Approval actions ---- */
+
+.admin-approval-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-approve-btn,
+.admin-reject-btn {
+  padding: 6px 16px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.admin-approve-btn {
+  background: #1a8a3e;
+  color: #fff;
+  border: 1px solid #1a8a3e;
+}
+
+.admin-approve-btn:hover {
+  background: #157a34;
+}
+
+.admin-reject-btn {
+  background: transparent;
+  color: #dc3232;
+  border: 1px solid #dc3232;
+}
+
+.admin-reject-btn:hover {
+  background: rgba(220, 50, 50, 0.1);
+}
+
+/* Pending count badge */
+.admin-badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  background: #dc3232;
+  color: #fff;
+  border-radius: 9px;
+  margin-left: 6px;
+}
+
+/* ---- Admin Log ---- */
+
+.admin-log {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-log-entry {
+  padding: 14px 16px;
+  background: var(--card-bg);
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: border-color var(--transition-fast);
+}
+
+.admin-log-entry:hover {
+  border-color: var(--border);
+}
+
+.admin-log-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.admin-log-action {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.admin-log-action--ranking_update {
+  background: var(--primary-glow);
+  color: var(--primary);
+}
+
+.admin-log-action--fighter_approved {
+  background: rgba(26, 138, 62, 0.15);
+  color: #1a8a3e;
+}
+
+.admin-log-action--fighter_rejected {
+  background: rgba(220, 50, 50, 0.1);
+  color: #dc3232;
+}
+
+.admin-log-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.admin-log-admin {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.admin-log-details {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .admin-ranking-row {
+    grid-template-columns: 60px 1fr;
+    gap: 12px;
+  }
+
+  .admin-champion-btn {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .admin-log-admin {
+    margin-left: 0;
+  }
+}

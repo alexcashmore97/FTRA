@@ -20,7 +20,7 @@
 .rankings-banner-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(10,10,10,0.3) 0%, var(--black) 100%);
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, var(--bg) 100%);
 }
 
 .rankings-header {
@@ -53,9 +53,9 @@
 }
 
 .gender-tab.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--text-on-red);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-on-primary);
 }
 
 .rankings-division-title {
@@ -84,7 +84,7 @@
   align-items: center;
   gap: 20px;
   padding: 16px 20px;
-  background: var(--charcoal-light);
+  background: var(--card-bg);
   border: 1px solid transparent;
   border-radius: 6px;
   transition: all var(--transition-base);
@@ -92,18 +92,18 @@
 }
 
 .ranking-row:hover {
-  background: var(--surface);
+  background: var(--surface-hover);
   border-color: var(--border);
   transform: translateX(4px);
 }
 
 .ranking-row.champion {
-  background: linear-gradient(90deg, rgba(212, 168, 67, 0.08) 0%, var(--charcoal-light) 100%);
+  background: linear-gradient(90deg, rgba(212, 168, 67, 0.06) 0%, var(--card-bg) 100%);
   border-color: var(--gold-dark);
 }
 
 .ranking-row.champion:hover {
-  background: linear-gradient(90deg, rgba(212, 168, 67, 0.12) 0%, var(--surface) 100%);
+  background: linear-gradient(90deg, rgba(212, 168, 67, 0.1) 0%, var(--surface-hover) 100%);
 }
 
 .ranking-fighter-info {
@@ -158,6 +158,17 @@
   color: var(--text-muted);
 }
 
+.ranking-instagram {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+
+.ranking-instagram:hover {
+  color: #E1306C;
+}
+
 .ranking-arrow {
   color: var(--text-muted);
   transition: transform var(--transition-fast);
@@ -181,7 +192,7 @@
   align-items: flex-end;
   min-height: 180px;
   padding: 20px 24px;
-  background: var(--charcoal-light);
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 6px;
   overflow: hidden;
@@ -212,14 +223,18 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.2) 60%, transparent 100%);
+  background: linear-gradient(0deg, var(--bg) 0%, rgba(0,0,0,0.15) 60%, transparent 100%);
   z-index: 1;
 }
 
+[data-theme="dark"] .division-card::after {
+  background: linear-gradient(0deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.2) 60%, transparent 100%);
+}
+
 .division-card:hover {
-  border-color: var(--red);
+  border-color: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px var(--card-hover-shadow);
 }
 
 .division-card-content {
@@ -252,7 +267,7 @@
 
 .division-card:hover .division-card-arrow {
   transform: translateX(4px);
-  color: var(--red);
+  color: var(--primary);
 }
 
 /* Division quick nav pills */
@@ -281,14 +296,8 @@
 }
 
 .division-pill.active {
-  border-color: var(--red);
-  color: var(--red);
-}
-
-.empty-state {
-  padding: 48px;
-  text-align: center;
-  color: var(--text-muted);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 @media (max-width: 768px) {

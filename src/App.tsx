@@ -5,8 +5,8 @@ import DivisionRankingsPage from '@/pages/DivisionRankingsPage';
 import P4PRankingsPage from '@/pages/P4PRankingsPage';
 import FighterProfilePage from '@/pages/FighterProfilePage';
 import ContactPage from '@/pages/ContactPage';
-import AdminLoginPage from '@/pages/AdminLoginPage';
-import FighterLoginPage from '@/pages/FighterLoginPage';
+import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
 import AdminDashboardPage from '@/pages/AdminDashboardPage';
 import FighterEditorPage from '@/pages/FighterEditorPage';
 import { AdminRoute, FighterRoute } from '@/components/ProtectedRoute';
@@ -25,8 +25,8 @@ export default function App() {
         <Route path="/contact" element={<ContactPage />} />
 
         {/* Auth */}
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/fighter-portal/login" element={<FighterLoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         {/* Admin — protected */}
         <Route element={<AdminRoute />}>

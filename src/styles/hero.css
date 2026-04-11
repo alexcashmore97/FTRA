@@ -18,6 +18,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0.2;
+}
+
+[data-theme="dark"] .hero-bg-image {
   opacity: 0.25;
 }
 
@@ -26,9 +30,9 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 30% 50%, var(--red-glow) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 50%, var(--primary-glow) 0%, transparent 60%),
     radial-gradient(ellipse at 70% 30%, var(--gold-glow) 0%, transparent 50%),
-    linear-gradient(180deg, transparent 0%, var(--black) 100%);
+    linear-gradient(180deg, transparent 0%, var(--bg) 100%);
   z-index: 1;
 }
 
@@ -45,7 +49,7 @@
   position: relative;
   z-index: 3;
   text-align: center;
-  max-width: 800px;
+  max-width: 680px;
   padding: 0 var(--container-padding);
 }
 
@@ -57,8 +61,8 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--red);
-  margin-bottom: 24px;
+  color: var(--primary);
+  margin-bottom: 16px;
 }
 
 .hero-eyebrow::before,
@@ -66,33 +70,33 @@
   content: '';
   width: 32px;
   height: 1px;
-  background: var(--red);
+  background: var(--primary);
 }
 
 .hero-title {
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
   font-weight: 900;
   line-height: 0.95;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .hero-title .highlight {
   display: block;
-  background: linear-gradient(135deg, var(--gold) 0%, var(--red) 100%);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .hero-subtitle {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.6;
-  max-width: 560px;
-  margin: 0 auto 40px;
+  max-width: 520px;
+  margin: 0 auto 32px;
 }
 
 .hero-actions {
@@ -141,9 +145,10 @@
 }
 
 .hero-stat {
-  background: var(--charcoal);
+  background: var(--bg-secondary);
   padding: 32px;
   text-align: center;
+  transition: background var(--transition-base);
 }
 
 .hero-stat-value {
