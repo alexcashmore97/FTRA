@@ -11,7 +11,8 @@ import '@/styles/fighter-editor.css';
 
 export default function FighterEditorPage() {
   const { id } = useParams<{ id: string }>();
-  const { user, fighterId, logout } = useAuth();
+  const { user, role, fighterId, logout } = useAuth();
+  const isAdmin = role === 'admin';
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [fighter, setFighter] = useState<Fighter | null>(null);
@@ -30,8 +31,8 @@ export default function FighterEditorPage() {
   const [record, setRecord] = useState('');
   const [age, setAge] = useState('');
 
-  // Fighter can only edit their own profile
-  if (fighterId && id !== fighterId) {
+  // Fighters can only edit their own profile; admins can edit any
+  if (!isAdmin && fighterId && id !== fighterId) {
     return <Navigate to={`/fighter-portal/${fighterId}`} replace />;
   }
 
@@ -83,7 +84,8 @@ export default function FighterEditorPage() {
     setUploading(true);
     setMessage(null);
     try {
-      const storageRef = ref(storage, `fighters/${user!.uid}/profile.${file.name.split('.').pop()}`);
+      const uploadUid = isAdmin ? (fighter?.uid || id!) : user!.uid;
+      const storageRef = ref(storage, `fighters/${uploadUid}/profile.${file.name.split('.').pop()}`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
       setPhotoPreview(url);
@@ -142,8 +144,8 @@ export default function FighterEditorPage() {
   return (
     <div className="section container">
       <div className="section-header">
-        <p className="label">Fighter Portal</p>
-        <h2>Edit Profile</h2>
+        <p className="label">{isAdmin ? 'Admin' : 'Fighter Portal'}</p>
+        <h2>{isAdmin ? `Editing: ${fighter?.firstName} ${fighter?.lastName}` : 'Edit Profile'}</h2>
         <p style={{ color: 'var(--text-secondary)', marginTop: 8 }}>
           Logged in as {user?.email}
           <button className="auth-logout-btn" style={{ marginLeft: 16 }} onClick={logout}>

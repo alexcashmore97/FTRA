@@ -74,6 +74,7 @@ export default function RegisterPage() {
         lastName: lastName.trim(),
         nickname: nickname.trim(),
         gym: gym.trim(),
+        instagram: instagram.trim(),
         state,
         nationality: nationality.trim(),
         gender,
@@ -155,9 +156,15 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="auth-field">
-          <label className="label">Nickname</label>
-          <input className="input" value={nickname} onChange={e => setNickname(e.target.value)} placeholder='e.g. "The Storm"' />
+        <div className="register-row">
+          <div className="auth-field">
+            <label className="label">Nickname</label>
+            <input className="input" value={nickname} onChange={e => setNickname(e.target.value)} placeholder='e.g. "The Storm"' />
+          </div>
+          <div className="auth-field">
+            <label className="label">Instagram</label>
+            <input className="input" value={instagram} onChange={e => setInstagram(e.target.value)} placeholder="@yourhandle" />
+          </div>
         </div>
 
         <div className="register-row">

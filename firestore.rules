@@ -9,26 +9,47 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Fighters: public read, admin full write, fighter can edit own profile
+    // Fighters: public read approved only, admin full write,
+    // fighter can edit own profile fields, self-registration allowed
     match /fighters/{fighterId} {
+      // Anyone can read (JS filters pending on the client; public pages only query status==approved)
       allow read: if true;
+
+      // Admin can do anything
       allow create, delete: if isAdmin();
-      allow update: if isAdmin() || isOwner(resource.data.uid);
+      allow update: if isAdmin();
+
+      // Fighter can create their own doc (registration) with pending status
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.uid
+        && request.resource.data.status == 'pending';
+
+      // Fighter can update their own profile (limited fields)
+      allow update: if isOwner(resource.data.uid)
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.rank == resource.data.rank
+        && request.resource.data.p4pRank == resource.data.p4pRank
+        && request.resource.data.titleHolder == resource.data.titleHolder
+        && request.resource.data.division == resource.data.division
+        && request.resource.data.gender == resource.data.gender;
     }
 
-    // Admins: authenticated users can read their own doc (for role check), admins can read/write all
+    // Admins: own doc readable for role check, full access for admins
     match /admins/{adminId} {
       allow read: if request.auth != null && request.auth.uid == adminId;
       allow read, write: if isAdmin();
     }
 
-    // Helper: check if request user is an admin
+    // Admin log: admin read/write only
+    match /admin_log/{logId} {
+      allow read, write: if isAdmin();
+    }
+
     function isAdmin() {
       return request.auth != null &&
         exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    // Helper: check if request user owns this fighter profile
     function isOwner(uid) {
       return request.auth != null && request.auth.uid == uid;
     }

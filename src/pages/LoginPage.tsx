@@ -19,9 +19,7 @@ export default function LoginPage() {
     } else if (role === 'fighter' && fighterId) {
       navigate(`/fighter-portal/${fighterId}`, { replace: true });
     } else if (role === null) {
-      // Authenticated but no role — reset button, show error
       setSubmitting(false);
-      setError('Account has no role assigned. Contact an admin.');
     }
   }, [user, role, fighterId, loading, navigate]);
 

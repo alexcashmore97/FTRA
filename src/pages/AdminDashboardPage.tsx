@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { collection, getDocs, writeBatch, doc, query, where, orderBy, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
@@ -26,6 +27,7 @@ export default function AdminDashboardPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
+  const [search, setSearch] = useState('');
   const divisions = getDivisionsByGender(gender);
   const adminEmail = user?.email ?? 'unknown';
 
@@ -35,6 +37,7 @@ export default function AdminDashboardPage() {
   }, [tab]);
 
   useEffect(() => {
+    setSearch('');
     if (tab === 'division' || tab === 'p4p') loadFighters();
   }, [selectedDivision.id, tab, gender]);
 
@@ -349,12 +352,28 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
+        <div className="admin-search" style={{ marginTop: 16 }}>
+          <input
+            className="input"
+            type="text"
+            placeholder="Search by name or gym..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+
         {loading ? (
           <div className="empty-state">Loading fighters...</div>
         ) : (
           <div className="admin-ranking-list">
             {fighters.length === 0 && <div className="empty-state">No fighters found.</div>}
-            {fighters.map(fighter => (
+            {fighters.filter(f => {
+              if (!search.trim()) return true;
+              const s = search.toLowerCase();
+              const name = `${f.firstName} ${f.lastName}`.toLowerCase();
+              const gym = (f.gym || '').toLowerCase();
+              return name.includes(s) || gym.includes(s);
+            }).map(fighter => (
               <div key={fighter.id} className={`admin-ranking-row ${fighter.titleHolder ? 'champion' : ''}`}>
                 <div className="admin-rank-input">
                   {tab === 'division' ? (
@@ -384,9 +403,14 @@ export default function AdminDashboardPage() {
                   )}
                 </div>
                 <div className="admin-fighter-info">
-                  <span className="admin-fighter-name">{fighter.firstName} {fighter.lastName}</span>
+                  <Link to={`/fighters/${fighter.id}`} className="admin-fighter-name-link">
+                    {fighter.firstName} {fighter.lastName}
+                  </Link>
                   <span className="admin-fighter-meta">{fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}</span>
                 </div>
+                <Link to={`/fighter-portal/${fighter.id}`} className="btn btn-ghost" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
+                  Edit
+                </Link>
                 {tab === 'division' && (
                   <button
                     className={`admin-champion-btn ${fighter.titleHolder ? 'active' : ''}`}

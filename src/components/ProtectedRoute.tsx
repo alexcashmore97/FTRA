@@ -17,6 +17,7 @@ export function FighterRoute() {
 
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" replace />;
+  if (role === 'admin') return <Outlet />;
   if (role !== 'fighter') return <Navigate to="/" replace />;
 
   if (fighterStatus === 'pending') {

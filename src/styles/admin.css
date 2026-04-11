@@ -27,9 +27,9 @@
 
 .admin-ranking-row {
   display: grid;
-  grid-template-columns: 72px 1fr auto;
+  grid-template-columns: 72px 1fr auto auto;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   padding: 12px 16px;
   background: var(--card-bg);
   border: 1px solid transparent;
@@ -78,6 +78,24 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.admin-fighter-name-link {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.admin-fighter-name-link:hover {
+  color: var(--primary);
+  text-decoration: underline;
 }
 
 .admin-fighter-meta {
@@ -258,8 +276,8 @@
 
 @media (max-width: 768px) {
   .admin-ranking-row {
-    grid-template-columns: 60px 1fr;
-    gap: 12px;
+    grid-template-columns: 60px 1fr auto;
+    gap: 8px;
   }
 
   .admin-champion-btn {
