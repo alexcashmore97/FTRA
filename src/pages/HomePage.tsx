@@ -25,18 +25,12 @@ export default function HomePage() {
             At Full Thai Rules Australia, we are committed to shining a spotlight on the warriors of Australian Muay Thai. Our mission is to celebrate their dedication, skill, and sacrifices, ensuring they receive the recognition and respect they truly deserve. Through our platform, we aim to preserve the rich heritage of Muay Thai and inspire the next generation of fighters and fans alike.
           </p>
           <div className="hero-actions">
-            <Link to="/rankings/p4p?gender=male" className="btn btn-primary">
-              View P4P Rankings
-            </Link>
-            <a href="#divisions" className="btn btn-outline">
+            <a href="#divisions" className="btn btn-primary">
               Browse Divisions
             </a>
           </div>
         </div>
-        <div className="hero-scroll">
-          <span>Scroll</span>
-          <div className="hero-scroll-line" />
-        </div>
+
       </section>
 
       {/* Stats */}

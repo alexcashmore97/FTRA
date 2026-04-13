@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, writeBatch, doc, query, where, orderBy, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc, query, where, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
 import { DIVISIONS, getDivisionsByGender, getDivisionById, type Division } from '@/lib/divisions';
@@ -76,12 +76,23 @@ export default function AdminDashboardPage() {
     try {
       let q;
       if (tab === 'division') {
-        q = query(collection(db, 'fighters'), where('division', '==', selectedDivision.id), orderBy('rank', 'asc'));
+        q = query(collection(db, 'fighters'), where('division', '==', selectedDivision.id), where('status', '==', 'approved'));
       } else {
-        q = query(collection(db, 'fighters'), where('gender', '==', gender));
+        q = query(collection(db, 'fighters'), where('gender', '==', gender), where('status', '==', 'approved'));
       }
       const snap = await getDocs(q);
       const list = snap.docs.map(d => ({ id: d.id, ...d.data() } as Fighter));
+
+      if (tab === 'division') {
+        list.sort((a, b) => {
+          if (a.titleHolder && !b.titleHolder) return -1;
+          if (!a.titleHolder && b.titleHolder) return 1;
+          if (a.rank === null && b.rank === null) return 0;
+          if (a.rank === null) return 1;
+          if (b.rank === null) return -1;
+          return a.rank - b.rank;
+        });
+      }
 
       if (tab === 'p4p') {
         list.sort((a, b) => {

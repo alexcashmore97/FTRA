@@ -5,6 +5,7 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "division", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "rank", "order": "ASCENDING" }
       ]
     },
@@ -13,6 +14,7 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "gender", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "p4pRank", "order": "ASCENDING" }
       ]
     }

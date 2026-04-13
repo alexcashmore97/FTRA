@@ -275,14 +275,53 @@
 }
 
 @media (max-width: 768px) {
+  .admin-tabs {
+    flex-wrap: wrap;
+  }
+
+  .admin-search {
+    margin-top: 8px !important;
+  }
+
   .admin-ranking-row {
-    grid-template-columns: 60px 1fr auto;
-    gap: 8px;
+    grid-template-columns: 52px 1fr;
+    gap: 6px 10px;
+    padding: 10px 12px;
+  }
+
+  .admin-rank-number {
+    width: 48px;
+    padding: 6px;
+    font-size: 0.85rem;
+  }
+
+  .admin-fighter-name-link,
+  .admin-fighter-name {
+    font-size: 0.8rem;
+  }
+
+  .admin-fighter-meta {
+    font-size: 0.7rem;
   }
 
   .admin-champion-btn {
     grid-column: 1 / -1;
     justify-self: start;
+    padding: 5px 12px;
+  }
+
+  .btn-ghost {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .admin-division-select {
+    max-width: 100%;
+  }
+
+  .admin-save-bar {
+    padding: 16px 12px;
+    flex-wrap: wrap;
   }
 
   .admin-log-admin {

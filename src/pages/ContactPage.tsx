@@ -1,14 +1,4 @@
-import { useState, type FormEvent } from 'react';
-
 export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    // TODO: Wire to email service or Firestore
-    setSubmitted(true);
-  };
-
   return (
     <div className="rankings-page">
       <div className="container" style={{ maxWidth: '640px' }}>
@@ -17,36 +7,18 @@ export default function ContactPage() {
           <h1>Contact Us</h1>
         </div>
 
-        {submitted ? (
-          <div style={{ padding: '48px', textAlign: 'center' }}>
-            <h3 style={{ color: 'var(--gold)', marginBottom: '12px' }}>Message Sent</h3>
-            <p style={{ color: 'var(--text-secondary)' }}>We'll get back to you as soon as possible.</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div>
-              <label className="label" style={{ display: 'block', marginBottom: '8px' }}>Name</label>
-              <input className="input" type="text" required placeholder="Your name" />
-            </div>
-            <div>
-              <label className="label" style={{ display: 'block', marginBottom: '8px' }}>Email</label>
-              <input className="input" type="email" required placeholder="you@email.com" />
-            </div>
-            <div>
-              <label className="label" style={{ display: 'block', marginBottom: '8px' }}>Message</label>
-              <textarea
-                className="input"
-                required
-                rows={6}
-                placeholder="How can we help?"
-                style={{ resize: 'vertical' }}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary" style={{ alignSelf: 'flex-start' }}>
-              Send Message
-            </button>
-          </form>
-        )}
+        <div style={{ textAlign: 'center', padding: '24px 0 64px' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.7, marginBottom: '32px' }}>
+            For all enquiries including ranking disputes, partnership opportunities, event submissions, or general questions, please send us an email and we'll get back to you as soon as possible.
+          </p>
+          <a
+            href="mailto:fullthairulesaustralia@gmail.com"
+            className="btn btn-primary"
+            style={{ fontSize: '0.9rem', padding: '14px 32px' }}
+          >
+            fullthairulesaustralia@gmail.com
+          </a>
+        </div>
       </div>
     </div>
   );
