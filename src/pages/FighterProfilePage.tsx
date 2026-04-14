@@ -137,6 +137,15 @@ export default function FighterProfilePage() {
             <p>{fighter.bio}</p>
           </div>
         )}
+
+        {!fighter.uid && (
+          <div className="fighter-claim">
+            <p>Is this you? Claim this profile to manage your info, upload a photo, and more.</p>
+            <Link to={`/register?claim=${fighter.id}`} className="btn btn-primary">
+              Claim This Profile
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

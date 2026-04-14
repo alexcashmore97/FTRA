@@ -1,15 +1,22 @@
-import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, type FormEvent } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
+import { getFighterById } from '@/lib/fighters';
 import { DIVISIONS, getDivisionsByGender } from '@/lib/divisions';
+import type { Fighter } from '@/lib/types';
 import '@/styles/auth.css';
 
 const STATES = ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'];
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const claimId = searchParams.get('claim');
+
+  const [claimFighter, setClaimFighter] = useState<Fighter | null>(null);
+  const [claimLoading, setClaimLoading] = useState(!!claimId);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,6 +41,40 @@ export default function RegisterPage() {
   const [bio, setBio] = useState('');
 
   const divisions = getDivisionsByGender(gender);
+
+  // Load claim fighter data
+  useEffect(() => {
+    if (!claimId) return;
+    getFighterById(claimId)
+      .then(fighter => {
+        if (!fighter || fighter.uid) {
+          // Fighter not found or already claimed
+          setError(fighter?.uid ? 'This profile has already been claimed.' : 'Fighter profile not found.');
+          setClaimLoading(false);
+          return;
+        }
+        setClaimFighter(fighter);
+        // Pre-fill form with existing data
+        setFirstName(fighter.firstName);
+        setLastName(fighter.lastName);
+        setNickname(fighter.nickname);
+        setGym(fighter.gym);
+        setInstagram(fighter.instagram ?? '');
+        setState(fighter.state);
+        setNationality(fighter.nationality ?? '');
+        setGender(fighter.gender);
+        setDivision(fighter.division);
+        setStance(fighter.stance);
+        setRecord(fighter.record);
+        setAge(fighter.age ? String(fighter.age) : '');
+        setBio(fighter.bio);
+        setClaimLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to load fighter profile.');
+        setClaimLoading(false);
+      });
+  }, [claimId]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -64,38 +105,50 @@ export default function RegisterPage() {
     try {
       // Create Firebase Auth account
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-
-      // Look up the full division info for weightClass
       const divisionData = DIVISIONS.find(d => d.id === division);
 
-      // Create fighter doc in Firestore with pending status
-      await setDoc(doc(db, 'fighters', cred.user.uid), {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        nickname: nickname.trim(),
-        gym: gym.trim(),
-        instagram: instagram.trim(),
-        state,
-        nationality: nationality.trim(),
-        gender,
-        division,
-        weightClass: divisionData ? `${divisionData.name} ${divisionData.weight}` : '',
-        stance,
-        record: record.trim(),
-        age: age ? parseInt(age, 10) : null,
-        bio: bio.trim(),
-        photoURL: '',
-        rank: null,
-        p4pRank: null,
-        titleHolder: false,
-        titleDate: null,
-        email,
-        uid: cred.user.uid,
-        status: 'pending',
-      });
-
-      // Redirect to fighter portal — they'll see the pending screen
-      navigate(`/fighter-portal/${cred.user.uid}`);
+      if (claimFighter && claimId) {
+        // Claim flow: update existing fighter doc, linking the new UID
+        await updateDoc(doc(db, 'fighters', claimId), {
+          uid: cred.user.uid,
+          email,
+          nickname: nickname.trim(),
+          instagram: instagram.trim(),
+          nationality: nationality.trim(),
+          stance,
+          record: record.trim(),
+          age: age ? parseInt(age, 10) : null,
+          bio: bio.trim(),
+        });
+        navigate(`/fighter-portal/${claimId}`);
+      } else {
+        // Normal registration: create new fighter doc
+        await setDoc(doc(db, 'fighters', cred.user.uid), {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          nickname: nickname.trim(),
+          gym: gym.trim(),
+          instagram: instagram.trim(),
+          state,
+          nationality: nationality.trim(),
+          gender,
+          division,
+          weightClass: divisionData ? `${divisionData.name} ${divisionData.weight}` : '',
+          stance,
+          record: record.trim(),
+          age: age ? parseInt(age, 10) : null,
+          bio: bio.trim(),
+          photoURL: '',
+          rank: null,
+          p4pRank: null,
+          titleHolder: false,
+          titleDate: null,
+          email,
+          uid: cred.user.uid,
+          status: 'pending',
+        });
+        navigate(`/fighter-portal/${cred.user.uid}`);
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Registration failed.';
       if (message.includes('email-already-in-use')) {
@@ -108,13 +161,28 @@ export default function RegisterPage() {
     }
   }
 
+  if (claimLoading) {
+    return (
+      <div className="section container" style={{ maxWidth: 640 }}>
+        <div className="empty-state">Loading fighter profile...</div>
+      </div>
+    );
+  }
+
+  const isClaim = !!claimFighter;
+
   return (
     <div className="section container" style={{ maxWidth: 640 }}>
       <div className="section-header" style={{ textAlign: 'center' }}>
-        <div className="auth-badge fighter-badge">Fighter Registration</div>
-        <h2>Join the Rankings</h2>
+        <div className="auth-badge fighter-badge">
+          {isClaim ? 'Claim Profile' : 'Fighter Registration'}
+        </div>
+        <h2>{isClaim ? `Claim ${claimFighter.firstName} ${claimFighter.lastName}'s Profile` : 'Join the Rankings'}</h2>
         <p className="auth-subtitle">
-          Create your fighter profile. Once submitted, an admin will review and approve your registration.
+          {isClaim
+            ? 'Create an account to claim this profile. Your name, division, and ranking will stay the same.'
+            : 'Create your fighter profile. Once submitted, an admin will review and approve your registration.'
+          }
         </p>
       </div>
 
@@ -148,11 +216,11 @@ export default function RegisterPage() {
         <div className="register-row">
           <div className="auth-field">
             <label className="label">First Name *</label>
-            <input className="input" required value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" />
+            <input className="input" required value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" disabled={isClaim} />
           </div>
           <div className="auth-field">
             <label className="label">Last Name *</label>
-            <input className="input" required value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" />
+            <input className="input" required value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" disabled={isClaim} />
           </div>
         </div>
 
@@ -170,11 +238,11 @@ export default function RegisterPage() {
         <div className="register-row">
           <div className="auth-field">
             <label className="label">Gym *</label>
-            <input className="input" required value={gym} onChange={e => setGym(e.target.value)} placeholder="Your gym" />
+            <input className="input" required value={gym} onChange={e => setGym(e.target.value)} placeholder="Your gym" disabled={isClaim} />
           </div>
           <div className="auth-field">
             <label className="label">State *</label>
-            <select className="input" required value={state} onChange={e => setState(e.target.value)} style={{ appearance: 'auto' }}>
+            <select className="input" required value={state} onChange={e => setState(e.target.value)} style={{ appearance: 'auto' }} disabled={isClaim}>
               <option value="">Select...</option>
               {STATES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -195,14 +263,14 @@ export default function RegisterPage() {
         <div className="register-row">
           <div className="auth-field">
             <label className="label">Gender *</label>
-            <select className="input" required value={gender} onChange={e => { setGender(e.target.value as 'male' | 'female'); setDivision(''); }} style={{ appearance: 'auto' }}>
+            <select className="input" required value={gender} onChange={e => { setGender(e.target.value as 'male' | 'female'); setDivision(''); }} style={{ appearance: 'auto' }} disabled={isClaim}>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
           </div>
           <div className="auth-field">
             <label className="label">Division *</label>
-            <select className="input" required value={division} onChange={e => setDivision(e.target.value)} style={{ appearance: 'auto' }}>
+            <select className="input" required value={division} onChange={e => setDivision(e.target.value)} style={{ appearance: 'auto' }} disabled={isClaim}>
               <option value="">Select division...</option>
               {divisions.map(d => <option key={d.id} value={d.id}>{d.name} — {d.weight}</option>)}
             </select>
@@ -240,7 +308,7 @@ export default function RegisterPage() {
         {error && <div className="auth-error">{error}</div>}
 
         <button type="submit" className="btn btn-primary auth-submit" disabled={submitting}>
-          {submitting ? 'Registering...' : 'Register'}
+          {submitting ? (isClaim ? 'Claiming...' : 'Registering...') : (isClaim ? 'Claim Profile' : 'Register')}
         </button>
 
         <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
