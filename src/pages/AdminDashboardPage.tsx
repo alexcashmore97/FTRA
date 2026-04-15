@@ -402,9 +402,10 @@ export default function AdminDashboardPage() {
   // ---- Render ----
 
   return (
-    <div className="section container">
+    <div className="page-wrapper section container">
       <div className="section-header">
-        <p className="label">Admin Portal</p>
+        <br />
+        <br />
         <h2>Ranking Manager</h2>
         <p style={{ color: 'var(--text-secondary)', marginTop: 8 }}>
           Logged in as {user?.email}

@@ -160,7 +160,7 @@ export default function RegisterPage() {
 
   if (claimLoading) {
     return (
-      <div className="section container" style={{ maxWidth: 640 }}>
+      <div className="page-wrapper section container" style={{ maxWidth: 640 }}>
         <div className="empty-state">Loading fighter profile...</div>
       </div>
     );
@@ -169,7 +169,7 @@ export default function RegisterPage() {
   const isClaim = !!claimFighter;
 
   return (
-    <div className="section container" style={{ maxWidth: 640 }}>
+    <div className="page-wrapper section container" style={{ maxWidth: 640 }}>
       <div className="section-header" style={{ textAlign: 'center' }}>
         <div className="auth-badge fighter-badge">
           {isClaim ? 'Claim Profile' : 'Fighter Registration'}

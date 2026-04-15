@@ -469,4 +469,15 @@
   }
   .ranking-arrow { display: none; }
   .ranking-fighter-photo { width: 40px; height: 40px; }
+
+  .ranking-fighter-name {
+    display: block;
+    white-space: normal;
+  }
+
+  .ranking-title-inline {
+    display: block;
+    width: fit-content;
+    margin-top: 4px;
+  }
 }

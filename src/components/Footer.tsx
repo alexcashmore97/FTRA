@@ -49,8 +49,7 @@ export default function Footer() {
             <div className="footer-col">
               <h4 className="footer-col-title">More</h4>
               <Link to="/contact">Contact</Link>
-              <Link to="/admin/login">Admin</Link>
-              <Link to="/fighter-portal/login">Fighter Portal</Link>
+              <Link to="/login">Fighter Portal</Link>
             </div>
           </div>
         </div>

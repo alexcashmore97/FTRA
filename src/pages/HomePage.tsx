@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import DivisionCard from '@/components/DivisionCard';
 import { getDivisionsByGender } from '@/lib/divisions';
 import '@/styles/hero.css';
