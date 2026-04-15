@@ -59,6 +59,7 @@ function docToFighter(id: string, data: Record<string, unknown>): Fighter {
     p4pRank: (data.p4pRank as number) ?? null,
     bio: (data.bio as string) ?? '',
     photoURL: (data.photoURL as string) ?? '',
+    videoURL: (data.videoURL as string) ?? '',
     record: (data.record as string) ?? '',
     age: (data.age as number) ?? null,
     stance: (data.stance as string) ?? '',

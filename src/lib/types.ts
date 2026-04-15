@@ -18,6 +18,7 @@ export interface Fighter {
   p4pRank: number | null;
   bio: string;
   photoURL: string;
+  videoURL: string;
   record: string;
   age: number | null;
   stance: string;

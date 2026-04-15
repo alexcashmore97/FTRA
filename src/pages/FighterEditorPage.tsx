@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
 import { getDivisionById } from '@/lib/divisions';
@@ -15,13 +15,17 @@ export default function FighterEditorPage() {
   const { user, role, fighterId, logout } = useAuth();
   const isAdmin = role === 'admin';
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   const [fighter, setFighter] = useState<Fighter | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
 
   // Form fields
   const [nickname, setNickname] = useState('');
@@ -61,6 +65,7 @@ export default function FighterEditorPage() {
       setRecord(data.record || '');
       setAge(data.age?.toString() || '');
       setPhotoPreview(data.photoURL || null);
+      setVideoPreview(data.videoURL || null);
     } catch {
       setMessage('Failed to load profile.');
     } finally {
@@ -99,6 +104,73 @@ export default function FighterEditorPage() {
       setMessage('Photo upload failed.');
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleVideoUpload(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 50 * 1024 * 1024) {
+      setMessage('Video must be under 50MB.');
+      return;
+    }
+
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    const validExts = ['mp4', 'mov', 'webm', 'm4v', 'avi'];
+    const isVideoByType = file.type.startsWith('video/');
+    const isVideoByExt = validExts.includes(ext);
+    if (!isVideoByType && !isVideoByExt) {
+      setMessage('Please upload a video file (.mp4, .mov, .webm).');
+      return;
+    }
+
+    setUploadingVideo(true);
+    setVideoProgress(0);
+    setMessage(null);
+
+    try {
+      const uploadUid = isAdmin ? (fighter?.uid || id!) : user!.uid;
+      const ext = file.name.split('.').pop() || 'mp4';
+      const storageRef = ref(storage, `fighters/${uploadUid}/highlight.${ext}`);
+
+      const task = uploadBytesResumable(storageRef, file, { contentType: file.type });
+      await new Promise<void>((resolve, reject) => {
+        task.on('state_changed',
+          snap => setVideoProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
+          reject,
+          () => resolve(),
+        );
+      });
+      const url = await getDownloadURL(storageRef);
+      setVideoPreview(url);
+      await updateDoc(doc(db, 'fighters', id!), { videoURL: url });
+      setMessage('Highlight reel uploaded.');
+    } catch (err) {
+      console.error('Video upload error:', err);
+      setMessage('Video upload failed.');
+    } finally {
+      setUploadingVideo(false);
+      setVideoProgress(0);
+    }
+  }
+
+  async function handleRemoveVideo() {
+    if (!confirm('Remove your highlight reel?')) return;
+    try {
+      // Best-effort delete from storage (url may not match current path)
+      if (fighter?.videoURL) {
+        try {
+          await deleteObject(ref(storage, fighter.videoURL));
+        } catch {
+          // ignore — file may already be gone or path differs
+        }
+      }
+      await updateDoc(doc(db, 'fighters', id!), { videoURL: '' });
+      setVideoPreview(null);
+      setMessage('Highlight reel removed.');
+    } catch {
+      setMessage('Failed to remove video.');
     }
   }
 
@@ -178,6 +250,53 @@ export default function FighterEditorPage() {
               accept="image/*"
               style={{ display: 'none' }}
               onChange={handlePhotoUpload}
+            />
+          </div>
+
+          {/* Highlight reel upload */}
+          <div className="fighter-editor-video">
+            {videoPreview ? (
+              <video
+                src={videoPreview}
+                controls
+                muted
+                playsInline
+                preload="metadata"
+                className="fighter-editor-video-preview"
+              />
+            ) : (
+              <div className="fighter-editor-video-empty">
+                No highlight reel uploaded
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ flex: 1, fontSize: '0.75rem', padding: '8px 12px' }}
+                onClick={() => videoInputRef.current?.click()}
+                disabled={uploadingVideo}
+              >
+                {uploadingVideo ? `Uploading ${videoProgress}%` : (videoPreview ? 'Replace Video' : 'Upload Highlight (max 50MB)')}
+              </button>
+              {videoPreview && (
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  style={{ fontSize: '0.75rem', padding: '8px 12px' }}
+                  onClick={handleRemoveVideo}
+                  disabled={uploadingVideo}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+            <input
+              ref={videoInputRef}
+              type="file"
+              accept="video/*,.mov,.mp4,.webm,.m4v"
+              style={{ display: 'none' }}
+              onChange={handleVideoUpload}
             />
           </div>
 

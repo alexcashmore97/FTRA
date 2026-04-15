@@ -1,0 +1,146 @@
+/* ========================================
+   Fighter Highlight Reel — Banner + Modal
+   ======================================== */
+
+.fighter-video-banner {
+  position: relative;
+  width: 100%;
+  max-height: 520px;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+  border-bottom: 1px solid var(--border);
+}
+
+.fighter-video-banner-el {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fighter-video-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.55) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+
+.fighter-video-banner:hover .fighter-video-banner-overlay,
+.fighter-video-banner:focus-visible .fighter-video-banner-overlay {
+  opacity: 1;
+}
+
+.fighter-video-banner-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ---- Modal ---- */
+
+.fighter-video-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  animation: fighter-video-fade 200ms var(--ease-out);
+}
+
+@keyframes fighter-video-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fighter-video-modal-el {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+  background: #000;
+}
+
+.fighter-video-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  z-index: 1;
+}
+
+.fighter-video-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ---- Editor preview ---- */
+
+.fighter-editor-video {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.fighter-editor-video-preview {
+  width: 100%;
+  border-radius: 6px;
+  background: #000;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.fighter-editor-video-empty {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .fighter-video-banner {
+    aspect-ratio: 16 / 9;
+  }
+  .fighter-video-modal {
+    padding: 16px;
+  }
+  .fighter-video-banner-overlay {
+    opacity: 1;
+  }
+}

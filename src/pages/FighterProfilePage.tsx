@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getFighterById } from '@/lib/fighters';
 import { getDivisionById } from '@/lib/divisions';
 import type { Fighter } from '@/lib/types';
+import '@/styles/fighter-video.css';
 
 function titleTier(title: string): string {
   const t = title.toLowerCase();
@@ -18,6 +19,18 @@ export default function FighterProfilePage() {
   const [fighter, setFighter] = useState<Fighter | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [videoFullscreen, setVideoFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (!videoFullscreen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setVideoFullscreen(false); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [videoFullscreen]);
 
   useEffect(() => {
     if (!id) return;
@@ -59,6 +72,50 @@ export default function FighterProfilePage() {
 
   return (
     <div className="fighter-profile">
+      {fighter.videoURL && (
+        <div className="fighter-video-banner" onClick={() => setVideoFullscreen(true)} role="button" tabIndex={0}>
+          <video
+            src={fighter.videoURL}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="fighter-video-banner-el"
+          />
+          <div className="fighter-video-banner-overlay">
+            <div className="fighter-video-banner-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 3 21 3 21 9" />
+                <polyline points="9 21 3 21 3 15" />
+                <line x1="21" y1="3" x2="14" y2="10" />
+                <line x1="3" y1="21" x2="10" y2="14" />
+              </svg>
+              <span>Watch Highlight Reel</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {videoFullscreen && fighter.videoURL && (
+        <div className="fighter-video-modal" onClick={() => setVideoFullscreen(false)}>
+          <button className="fighter-video-modal-close" onClick={() => setVideoFullscreen(false)} aria-label="Close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+          <video
+            src={fighter.videoURL}
+            autoPlay
+            controls
+            playsInline
+            className="fighter-video-modal-el"
+            onClick={e => e.stopPropagation()}
+          />
+        </div>
+      )}
+
       <div className="container">
         <div className="fighter-hero">
           <div className="fighter-photo-wrapper">
