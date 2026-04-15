@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
+import { getDivisionById } from '@/lib/divisions';
 import type { Fighter } from '@/lib/types';
 
 interface Props {
   fighter: Fighter;
+  divisionId?: string;
   showDivision?: boolean;
 }
 
@@ -16,15 +18,29 @@ function instagramHandle(raw: string): string {
   return `@${clean}`;
 }
 
-export default function RankingRow({ fighter, showDivision = false }: Props) {
-  const isChampion = fighter.titleHolder;
-  const isTopFive = (fighter.rank ?? 99) <= 5;
+function titleTier(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes('world')) return 'world';
+  if (t.includes('australian') || t.includes('national')) return 'national';
+  if (t.includes('state')) return 'state';
+  return 'other';
+}
+
+export default function RankingRow({ fighter, divisionId, showDivision = false }: Props) {
+  // When divisionId is provided, show division-specific ranking; otherwise show p4pRank
+  const ranking = divisionId ? fighter.rankings[divisionId] : null;
+  const rank = divisionId ? (ranking?.rank ?? null) : (fighter.p4pRank ?? null);
+  const title = ranking?.titleHolder ?? '';
+  const titleDate = ranking?.titleDate ?? null;
+
+  const isChampion = !!title;
+  const isTopFive = (rank ?? 99) <= 5;
   const initials = `${fighter.firstName?.[0] ?? ''}${fighter.lastName?.[0] ?? ''}`;
 
   return (
     <Link to={`/fighters/${fighter.id}`} className={`ranking-row ${isChampion ? 'champion' : ''}`}>
       <div className={`rank-badge ${isChampion ? 'champion' : isTopFive ? 'top-five' : ''}`}>
-        {isChampion ? 'C' : fighter.rank ?? '—'}
+        {isChampion ? 'C' : rank ?? '—'}
       </div>
 
       <div className="ranking-fighter-info">
@@ -37,11 +53,20 @@ export default function RankingRow({ fighter, showDivision = false }: Props) {
         <div>
           <div className="ranking-fighter-name">
             {fighter.firstName} {fighter.lastName}
+            {isChampion && (
+              <span className={`ranking-title-inline ${titleTier(title)}`}>{title}</span>
+            )}
           </div>
           <div className="ranking-fighter-meta">
             {fighter.record && <span className="ranking-fighter-record">{fighter.record}</span>}
             {fighter.gym && <span className="ranking-fighter-gym">{fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}</span>}
-            {showDivision && <span className="ranking-fighter-gym">{fighter.weightClass}</span>}
+            {showDivision && fighter.divisions.map(dId => {
+              const div = getDivisionById(dId);
+              return div ? <span key={dId} className="ranking-fighter-gym">{div.name} {div.weight}</span> : null;
+            })}
+            {isChampion && titleDate && (
+              <span className="ranking-fighter-gym">Since {new Date(titleDate).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}</span>
+            )}
           </div>
         </div>
       </div>
@@ -61,7 +86,6 @@ export default function RankingRow({ fighter, showDivision = false }: Props) {
             </svg>
           </a>
         )}
-        {isChampion && <span className="ranking-title-badge">Champion</span>}
         <svg className="ranking-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M7 4l6 6-6 6" />
         </svg>

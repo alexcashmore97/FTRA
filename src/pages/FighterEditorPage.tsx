@@ -5,6 +5,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
 import { getDivisionById } from '@/lib/divisions';
+import type { DivisionRanking } from '@/lib/types';
 import type { Fighter } from '@/lib/types';
 import '@/styles/auth.css';
 import '@/styles/fighter-editor.css';
@@ -139,7 +140,10 @@ export default function FighterEditorPage() {
     );
   }
 
-  const division = getDivisionById(fighter.division);
+  const divisionEntries = (fighter.divisions ?? []).map(dId => ({
+    division: getDivisionById(dId),
+    ranking: fighter.rankings?.[dId] as DivisionRanking | undefined,
+  })).filter(e => e.division);
 
   return (
     <div className="section container">
@@ -179,9 +183,12 @@ export default function FighterEditorPage() {
 
           <div className="fighter-editor-static">
             <h3>{fighter.firstName} {fighter.lastName}</h3>
-            {division && <p className="label">{division.name} — {division.weight}</p>}
-            {fighter.rank !== null && <p className="label" style={{ marginTop: 4 }}>Rank: #{fighter.rank}</p>}
-            {fighter.titleHolder && <span className="ranking-title-badge" style={{ marginTop: 8 }}>Champion</span>}
+            {divisionEntries.map(({ division: div, ranking }) => (
+              <div key={div!.id} style={{ marginTop: 4 }}>
+                <p className="label">{div!.name} — {div!.weight}{ranking?.rank != null ? ` (#${ranking.rank})` : ''}</p>
+                {ranking?.titleHolder && <span className="ranking-title-badge" style={{ marginTop: 4 }}>{ranking.titleHolder}</span>}
+              </div>
+            ))}
             {fighter.p4pRank !== null && <p className="label" style={{ marginTop: 4 }}>P4P: #{fighter.p4pRank}</p>}
           </div>
         </div>

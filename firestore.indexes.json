@@ -4,9 +4,8 @@
       "collectionGroup": "fighters",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "division", "order": "ASCENDING" },
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "rank", "order": "ASCENDING" }
+        { "fieldPath": "divisions", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "status", "order": "ASCENDING" }
       ]
     },
     {

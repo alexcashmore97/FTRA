@@ -6,10 +6,12 @@ interface Props {
 }
 
 export default function DivisionCard({ division }: Props) {
+  const rankingClassname = `division-card-image-${division.name}`.split(' ').join('')
+
   return (
     <Link to={`/rankings/${division.id}`} className="division-card">
-      <div className="division-card-image">
-        <img src={division.image} alt={division.name} />
+      <div className={`division-card-image`}>
+        <img className={`${rankingClassname}`} src={division.image} alt={division.name} />
       </div>
       <div className="division-card-content">
         <div className="division-card-name">{division.name}</div>

@@ -7,6 +7,9 @@
   position: relative;
   width: 100%;
   height: 240px;
+      @media (min-width:768px) {
+        height:280px !important
+      }
   overflow: hidden;
 }
 
@@ -16,6 +19,122 @@
   object-fit: cover;
   object-position: center top;
 }
+  .rankings-banner-img-Welterweight{
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+   
+  }
+    .rankings-banner-img-Flyweight{
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+   
+  }
+      .rankings-banner-img-Featherweight{
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+   
+  }
+        .rankings-banner-img-SuperBantamweight{
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+   
+  }
+        .rankings-banner-img-LightFlyweight{
+            object-fit:unset;
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    };
+
+   
+  }
+      .rankings-banner-img-SuperFlyweight{
+            object-fit:unset;
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    };
+
+   
+  }
+    .rankings-banner-img-Lightweight{
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+   
+  }
+    .rankings-banner-img-Middleweight{
+    @media (min-width:768px) {
+       margin-top:-75px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+   
+  }
+    .rankings-banner-img-SuperWelterweight{
+      object-position: center center !important;
+    @media (min-width:768px) {
+       margin-top:-120px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+  }
+          .rankings-banner-img-LightHeavyweight{
+      object-position: center center !important;
+    @media (min-width:768px) {
+       margin-top:-120px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+  }
+           .rankings-banner-img-Cruiserweight{
+      object-position: center center !important;
+    @media (min-width:768px) {
+       margin-top:-120px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+  }
+             .rankings-banner-img-Heavyweight{
+      object-position: center center !important;
+    @media (min-width:768px) {
+       margin-top:0px !important;
+    min-height:680px !important;
+    object-fit: cover !important;
+    }
+  }
+               .rankings-banner-img-SuperMiddleweight{
+      object-position: center center !important;
+    @media (min-width:768px) {
+       margin-top:0px !important;
+    min-height:680px !important;
+    object-fit: cover !important;
+    }
+  }
+    .rankings-banner-img-SuperLightweight{
+    @media (min-width:768px) {
+       margin-top:-50px !important;
+    min-height:680px !important;
+    object-fit: fill !important;
+    }
+   
+  }
 
 .rankings-banner-overlay {
   position: absolute;
@@ -136,6 +255,9 @@
 }
 
 .ranking-fighter-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -143,6 +265,42 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.ranking-title-inline {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* World Champion — gold */
+.ranking-title-inline.world {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #111;
+}
+
+/* National Champion — green with gold outline */
+.ranking-title-inline.national {
+  background: #1a8a3e;
+  border: 1px solid var(--gold);
+  color: #fff;
+}
+
+/* State Champion — green */
+.ranking-title-inline.state {
+  background: #1a8a3e;
+  color: #fff;
+}
+
+/* Fallback for unrecognised titles */
+.ranking-title-inline.other {
+  background: var(--surface);
+  color: var(--text-secondary);
 }
 
 .ranking-fighter-meta {
@@ -204,6 +362,9 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+}
+.division-card-image-Welterweight{
+  object-fit:fill !important;
 }
 
 .division-card-image img {

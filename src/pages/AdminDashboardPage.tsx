@@ -6,11 +6,71 @@ import { useAuth } from '@/lib/auth';
 import { DIVISIONS, getDivisionsByGender, getDivisionById, type Division } from '@/lib/divisions';
 import { getPendingFighters } from '@/lib/fighters';
 import { writeLog, getLogEntries, type LogEntry } from '@/lib/adminLog';
-import type { Fighter } from '@/lib/types';
+import type { Fighter, DivisionRanking } from '@/lib/types';
 import '@/styles/auth.css';
 import '@/styles/admin.css';
 
 type Tab = 'approvals' | 'division' | 'p4p' | 'log';
+
+// Rank input with local state — only commits to parent on blur/Enter so that
+// mid-typing values don't trigger the auto-compaction logic.
+function RankInput({
+  value,
+  placeholder,
+  onCommit,
+}: {
+  value: number | null;
+  placeholder: string;
+  onCommit: (v: number | null) => void;
+}) {
+  const [draft, setDraft] = useState<string>(value?.toString() ?? '');
+
+  // Sync from prop when the source of truth changes externally (e.g. compaction)
+  useEffect(() => {
+    setDraft(value?.toString() ?? '');
+  }, [value]);
+
+  function commit() {
+    const parsed = draft === '' ? null : parseInt(draft, 10);
+    const committed = Number.isNaN(parsed) ? null : parsed;
+    onCommit(committed);
+  }
+
+  return (
+    <input
+      type="number"
+      className="input admin-rank-number"
+      min={1}
+      placeholder={placeholder}
+      value={draft}
+      onChange={e => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={e => {
+        if (e.key === 'Enter') {
+          e.currentTarget.blur();
+        }
+      }}
+    />
+  );
+}
+
+// Helper to safely read a division ranking from a fighter
+function divRanking(fighter: Fighter, divId: string): DivisionRanking {
+  return fighter.rankings[divId] ?? { rank: null, titleHolder: '', titleDate: null };
+}
+
+// Helper to set a field in a fighter's division ranking (returns new rankings object)
+function withDivRanking(fighter: Fighter, divId: string, patch: Partial<DivisionRanking>): Record<string, DivisionRanking> {
+  return {
+    ...fighter.rankings,
+    [divId]: { ...divRanking(fighter, divId), ...patch },
+  };
+}
+
+// Deep-clone a fighter (shallow clone + clone rankings map)
+function cloneFighter(f: Fighter): Fighter {
+  return { ...f, rankings: { ...f.rankings } };
+}
 
 export default function AdminDashboardPage() {
   const { user, logout } = useAuth();
@@ -30,6 +90,7 @@ export default function AdminDashboardPage() {
   const [search, setSearch] = useState('');
   const divisions = getDivisionsByGender(gender);
   const adminEmail = user?.email ?? 'unknown';
+  const divId = selectedDivision.id;
 
   useEffect(() => {
     if (tab === 'approvals') loadPending();
@@ -71,26 +132,73 @@ export default function AdminDashboardPage() {
   }
 
   async function loadFighters() {
-    setLoading(true);
+    if (fighters.length === 0) setLoading(true);
     setMessage(null);
     try {
       let q;
       if (tab === 'division') {
-        q = query(collection(db, 'fighters'), where('division', '==', selectedDivision.id), where('status', '==', 'approved'));
+        q = query(collection(db, 'fighters'), where('divisions', 'array-contains', selectedDivision.id), where('status', '==', 'approved'));
       } else {
         q = query(collection(db, 'fighters'), where('gender', '==', gender), where('status', '==', 'approved'));
       }
       const snap = await getDocs(q);
-      const list = snap.docs.map(d => ({ id: d.id, ...d.data() } as Fighter));
+      const list: Fighter[] = snap.docs.map(d => {
+        const data = d.data();
+        // Build divisions + rankings from either new or legacy format
+        const divs: string[] = Array.isArray(data.divisions)
+          ? data.divisions
+          : data.division ? [data.division] : [];
+        const rankings: Record<string, DivisionRanking> = {};
+        if (data.rankings && typeof data.rankings === 'object' && !Array.isArray(data.rankings)) {
+          for (const [k, v] of Object.entries(data.rankings as Record<string, Record<string, unknown>>)) {
+            rankings[k] = {
+              rank: (v.rank as number) ?? null,
+              titleHolder: typeof v.titleHolder === 'string' ? v.titleHolder : (v.titleHolder ? 'Champion' : ''),
+              titleDate: (v.titleDate as string) ?? null,
+            };
+          }
+        } else if (divs.length > 0) {
+          rankings[divs[0]] = {
+            rank: (data.rank as number) ?? null,
+            titleHolder: typeof data.titleHolder === 'string' ? data.titleHolder : (data.titleHolder ? 'Champion' : ''),
+            titleDate: (data.titleDate as string) ?? null,
+          };
+        }
+        return {
+          id: d.id,
+          firstName: (data.firstName as string) ?? '',
+          lastName: (data.lastName as string) ?? '',
+          nickname: (data.nickname as string) ?? '',
+          gym: (data.gym as string) ?? '',
+          state: (data.state as string) ?? '',
+          divisions: divs,
+          rankings,
+          gender: (data.gender as 'male' | 'female') ?? 'male',
+          nationality: (data.nationality as string) ?? '',
+          p4pRank: (data.p4pRank as number) ?? null,
+          bio: (data.bio as string) ?? '',
+          photoURL: (data.photoURL as string) ?? '',
+          record: (data.record as string) ?? '',
+          age: (data.age as number) ?? null,
+          stance: (data.stance as string) ?? '',
+          instagram: (data.instagram as string) ?? '',
+          email: (data.email as string) ?? '',
+          uid: (data.uid as string) ?? null,
+          status: (data.status as 'pending' | 'approved') ?? 'approved',
+        };
+      });
 
       if (tab === 'division') {
+        const did = selectedDivision.id;
         list.sort((a, b) => {
-          if (a.titleHolder && !b.titleHolder) return -1;
-          if (!a.titleHolder && b.titleHolder) return 1;
-          if (a.rank === null && b.rank === null) return 0;
-          if (a.rank === null) return 1;
-          if (b.rank === null) return -1;
-          return a.rank - b.rank;
+          const aR = divRanking(a, did);
+          const bR = divRanking(b, did);
+          if (aR.titleHolder && !bR.titleHolder) return -1;
+          if (!aR.titleHolder && bR.titleHolder) return 1;
+          if (aR.rank === null && bR.rank === null) return 0;
+          if (aR.rank === null) return 1;
+          if (bR.rank === null) return -1;
+          return aR.rank - bR.rank;
         });
       }
 
@@ -103,8 +211,9 @@ export default function AdminDashboardPage() {
         });
       }
       setFighters(list);
-      setOriginalFighters(list.map(f => ({ ...f })));
-    } catch {
+      setOriginalFighters(list.map(cloneFighter));
+    } catch (err) {
+      console.error('Load fighters error:', err);
       setMessage('Failed to load fighters.');
     } finally {
       setLoading(false);
@@ -140,46 +249,78 @@ export default function AdminDashboardPage() {
 
   function setDivisionRank(fighterId: string, newRank: number | null) {
     setFighters(prev => {
-      const updated = prev.map(f => ({ ...f }));
-      const target = updated.find(f => f.id === fighterId);
-      if (!target) return prev;
+      // Apply the new rank to the target fighter
+      const withNewRank = prev.map(f => f.id === fighterId
+        ? { ...cloneFighter(f), rankings: withDivRanking(f, divId, { rank: newRank }) }
+        : f
+      );
 
-      const oldRank = target.rank;
-      if (oldRank !== null) {
-        updated.forEach(f => { if (f.id !== fighterId && f.rank !== null && f.rank > oldRank) f.rank--; });
-      }
-      if (newRank !== null) {
-        updated.forEach(f => { if (f.id !== fighterId && f.rank !== null && f.rank >= newRank) f.rank++; });
-      }
-      target.rank = newRank;
+      // Gather all ranked fighters, sort by rank (ties: edited fighter wins)
+      const rankedIds = withNewRank
+        .filter(f => divRanking(f, divId).rank !== null)
+        .sort((a, b) => {
+          const aR = divRanking(a, divId).rank ?? 999;
+          const bR = divRanking(b, divId).rank ?? 999;
+          if (aR !== bR) return aR - bR;
+          if (a.id === fighterId) return -1;
+          if (b.id === fighterId) return 1;
+          return 0;
+        })
+        .map(f => f.id);
 
-      return updated.sort((a, b) => {
-        if (a.titleHolder && !b.titleHolder) return -1;
-        if (!a.titleHolder && b.titleHolder) return 1;
-        if (a.rank === null && b.rank === null) return 0;
-        if (a.rank === null) return 1;
-        if (b.rank === null) return -1;
-        return a.rank - b.rank;
+      // Build map of id → new consecutive rank (1, 2, 3, ...)
+      const consecutive = new Map<string, number>();
+      rankedIds.forEach((id, i) => consecutive.set(id, i + 1));
+
+      // Apply consecutive ranks — compacts any gaps
+      const compacted = withNewRank.map(f => {
+        const nr = consecutive.get(f.id);
+        if (nr === undefined) return f; // unranked — leave alone
+        if (divRanking(f, divId).rank === nr) return f; // no change
+        return { ...cloneFighter(f), rankings: withDivRanking(f, divId, { rank: nr }) };
+      });
+
+      // Sort the list so rows visually reorder on commit
+      return compacted.sort((a, b) => {
+        const aR = divRanking(a, divId);
+        const bR = divRanking(b, divId);
+        if (aR.titleHolder && !bR.titleHolder) return -1;
+        if (!aR.titleHolder && bR.titleHolder) return 1;
+        if (aR.rank === null && bR.rank === null) return 0;
+        if (aR.rank === null) return 1;
+        if (bR.rank === null) return -1;
+        return aR.rank - bR.rank;
       });
     });
   }
 
   function setP4PRank(fighterId: string, newRank: number | null) {
     setFighters(prev => {
-      const updated = prev.map(f => ({ ...f }));
-      const target = updated.find(f => f.id === fighterId);
-      if (!target) return prev;
+      const withNewRank = prev.map(f => f.id === fighterId ? { ...f, p4pRank: newRank } : f);
 
-      const oldRank = target.p4pRank;
-      if (oldRank !== null) {
-        updated.forEach(f => { if (f.id !== fighterId && f.p4pRank !== null && f.p4pRank > oldRank) f.p4pRank--; });
-      }
-      if (newRank !== null) {
-        updated.forEach(f => { if (f.id !== fighterId && f.p4pRank !== null && f.p4pRank >= newRank) f.p4pRank++; });
-      }
-      target.p4pRank = newRank;
+      const rankedIds = withNewRank
+        .filter(f => f.p4pRank !== null)
+        .sort((a, b) => {
+          const aR = a.p4pRank ?? 999;
+          const bR = b.p4pRank ?? 999;
+          if (aR !== bR) return aR - bR;
+          if (a.id === fighterId) return -1;
+          if (b.id === fighterId) return 1;
+          return 0;
+        })
+        .map(f => f.id);
 
-      return updated.sort((a, b) => {
+      const consecutive = new Map<string, number>();
+      rankedIds.forEach((id, i) => consecutive.set(id, i + 1));
+
+      const compacted = withNewRank.map(f => {
+        const nr = consecutive.get(f.id);
+        if (nr === undefined) return f;
+        if (f.p4pRank === nr) return f;
+        return { ...f, p4pRank: nr };
+      });
+
+      return compacted.sort((a, b) => {
         if (a.p4pRank === null && b.p4pRank === null) return 0;
         if (a.p4pRank === null) return 1;
         if (b.p4pRank === null) return -1;
@@ -188,8 +329,16 @@ export default function AdminDashboardPage() {
     });
   }
 
-  function toggleChampion(fighterId: string) {
-    setFighters(prev => prev.map(f => f.id === fighterId ? { ...f, titleHolder: !f.titleHolder } : f));
+  function setChampionTitle(fighterId: string, title: string) {
+    setFighters(prev => prev.map(f =>
+      f.id === fighterId ? { ...f, rankings: withDivRanking(f, divId, { titleHolder: title }) } : f
+    ));
+  }
+
+  function setTitleDate(fighterId: string, date: string) {
+    setFighters(prev => prev.map(f =>
+      f.id === fighterId ? { ...f, rankings: withDivRanking(f, divId, { titleDate: date || null }) } : f
+    ));
   }
 
   // ---- Save with log ----
@@ -207,13 +356,17 @@ export default function AdminDashboardPage() {
         const name = `${f.firstName} ${f.lastName}`;
 
         if (tab === 'division') {
-          batch.update(ref, { rank: f.rank, titleHolder: f.titleHolder });
+          // Write the full rankings map for this fighter
+          batch.update(ref, { rankings: f.rankings });
 
-          if (orig && orig.rank !== f.rank) {
-            logLines.push(`${name}: rank ${orig.rank ?? 'unranked'} → ${f.rank ?? 'unranked'}`);
+          const newR = divRanking(f, divId);
+          const oldR = orig ? divRanking(orig, divId) : { rank: null, titleHolder: '', titleDate: null };
+
+          if (oldR.rank !== newR.rank) {
+            logLines.push(`${name}: rank ${oldR.rank ?? 'unranked'} → ${newR.rank ?? 'unranked'}`);
           }
-          if (orig && orig.titleHolder !== f.titleHolder) {
-            logLines.push(`${name}: ${f.titleHolder ? 'set as champion' : 'removed as champion'}`);
+          if (oldR.titleHolder !== newR.titleHolder) {
+            logLines.push(`${name}: ${newR.titleHolder ? `set as ${newR.titleHolder}` : 'title removed'}`);
           }
         } else {
           batch.update(ref, { p4pRank: f.p4pRank });
@@ -226,7 +379,6 @@ export default function AdminDashboardPage() {
 
       await batch.commit();
 
-      // Write log entries for every change
       if (logLines.length > 0) {
         const context = tab === 'division'
           ? `${selectedDivision.name} ${selectedDivision.weight}`
@@ -238,7 +390,7 @@ export default function AdminDashboardPage() {
         );
       }
 
-      setOriginalFighters(fighters.map(f => ({ ...f })));
+      setOriginalFighters(fighters.map(cloneFighter));
       setMessage('Rankings saved successfully.');
     } catch {
       setMessage('Failed to save. Check console for details.');
@@ -286,7 +438,10 @@ export default function AdminDashboardPage() {
           ) : (
             <div className="admin-ranking-list">
               {pendingFighters.map(fighter => {
-                const div = getDivisionById(fighter.division);
+                const divNames = fighter.divisions.map(dId => {
+                  const d = getDivisionById(dId);
+                  return d ? `${d.name} ${d.weight}` : dId;
+                }).join(', ');
                 return (
                   <div key={fighter.id} className="admin-ranking-row">
                     <div className="admin-fighter-info" style={{ gridColumn: '1 / 3' }}>
@@ -294,7 +449,7 @@ export default function AdminDashboardPage() {
                       <span className="admin-fighter-meta">
                         {fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}
                         {fighter.nationality ? ` — ${fighter.nationality}` : ''}
-                        {div ? ` — ${div.name} ${div.weight}` : ''}
+                        {divNames ? ` — ${divNames}` : ''}
                         {fighter.stance ? ` — ${fighter.stance}` : ''}
                         {fighter.record ? ` — ${fighter.record}` : ''}
                       </span>
@@ -384,54 +539,61 @@ export default function AdminDashboardPage() {
               const name = `${f.firstName} ${f.lastName}`.toLowerCase();
               const gym = (f.gym || '').toLowerCase();
               return name.includes(s) || gym.includes(s);
-            }).map(fighter => (
-              <div key={fighter.id} className={`admin-ranking-row ${fighter.titleHolder ? 'champion' : ''}`}>
-                <div className="admin-rank-input">
-                  {tab === 'division' ? (
-                    <input
-                      type="number"
-                      className="input admin-rank-number"
-                      min={1}
-                      placeholder={fighter.titleHolder ? 'C' : '—'}
-                      value={fighter.rank ?? ''}
-                      onChange={e => {
-                        const val = e.target.value === '' ? null : parseInt(e.target.value, 10);
-                        setDivisionRank(fighter.id, val);
-                      }}
-                    />
-                  ) : (
-                    <input
-                      type="number"
-                      className="input admin-rank-number"
-                      min={1}
-                      placeholder="—"
-                      value={fighter.p4pRank ?? ''}
-                      onChange={e => {
-                        const val = e.target.value === '' ? null : parseInt(e.target.value, 10);
-                        setP4PRank(fighter.id, val);
-                      }}
-                    />
+            }).map(fighter => {
+              const ranking = divRanking(fighter, divId);
+              return (
+                <div key={fighter.id} className={`admin-ranking-row ${ranking.titleHolder ? 'champion' : ''}`}>
+                  <div className="admin-rank-input">
+                    {tab === 'division' ? (
+                      <RankInput
+                        value={ranking.rank}
+                        placeholder={ranking.titleHolder ? 'C' : '—'}
+                        onCommit={val => setDivisionRank(fighter.id, val)}
+                      />
+                    ) : (
+                      <RankInput
+                        value={fighter.p4pRank}
+                        placeholder="—"
+                        onCommit={val => setP4PRank(fighter.id, val)}
+                      />
+                    )}
+                  </div>
+                  <div className="admin-fighter-info">
+                    <Link to={`/fighters/${fighter.id}`} className="admin-fighter-name-link">
+                      {fighter.firstName} {fighter.lastName}
+                    </Link>
+                    <span className="admin-fighter-meta">{fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}</span>
+                  </div>
+                  <Link to={`/fighter-portal/${fighter.id}`} className="btn btn-ghost" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
+                    Edit
+                  </Link>
+                  {tab === 'division' && (
+                    <div className="admin-title-controls">
+                      <select
+                        className="input admin-title-select"
+                        value={ranking.titleHolder}
+                        onChange={e => setChampionTitle(fighter.id, e.target.value)}
+                        style={{ appearance: 'auto' }}
+                      >
+                        <option value="">No Title</option>
+                        <option value="WBC World Champion">World Champion</option>
+                        <option value="WBC Australian Champion">National Champion</option>
+                        <option value={`WBC ${fighter.state} State Champion`}>State Champion ({fighter.state})</option>
+                      </select>
+                      {ranking.titleHolder && (
+                        <input
+                          type="date"
+                          className="input admin-title-date"
+                          value={ranking.titleDate ?? ''}
+                          onChange={e => setTitleDate(fighter.id, e.target.value)}
+                          title="Date belt was received"
+                        />
+                      )}
+                    </div>
                   )}
                 </div>
-                <div className="admin-fighter-info">
-                  <Link to={`/fighters/${fighter.id}`} className="admin-fighter-name-link">
-                    {fighter.firstName} {fighter.lastName}
-                  </Link>
-                  <span className="admin-fighter-meta">{fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}</span>
-                </div>
-                <Link to={`/fighter-portal/${fighter.id}`} className="btn btn-ghost" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
-                  Edit
-                </Link>
-                {tab === 'division' && (
-                  <button
-                    className={`admin-champion-btn ${fighter.titleHolder ? 'active' : ''}`}
-                    onClick={() => toggleChampion(fighter.id)}
-                  >
-                    {fighter.titleHolder ? 'Champion' : 'Set Champ'}
-                  </button>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

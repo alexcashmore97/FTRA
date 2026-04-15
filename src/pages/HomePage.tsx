@@ -22,7 +22,7 @@ export default function HomePage() {
             <span className="highlight">of Australian Muay Thai</span>
           </h1>
           <p className="hero-subtitle">
-            At Full Thai Rules Australia, we are committed to shining a spotlight on the warriors of Australian Muay Thai. Our mission is to celebrate their dedication, skill, and sacrifices, ensuring they receive the recognition and respect they truly deserve. Through our platform, we aim to preserve the rich heritage of Muay Thai and inspire the next generation of fighters and fans alike.
+            At Full Thai Rules Australia, we are committed to shining a spotlight on the warriors of Australian Muay Thai. <br /><br/>Our mission is to celebrate their dedication, skill, and sacrifices, ensuring they receive the recognition and respect they truly deserve. 
           </p>
           <div className="hero-actions">
             <a href="#divisions" className="btn btn-primary">
@@ -78,11 +78,13 @@ export default function HomePage() {
             ))}
           </div>
 
+          {/* TODO: uncomment when P4P rankings are populated
           <div style={{ textAlign: 'center', marginTop: '48px' }}>
             <Link to={`/rankings/p4p?gender=${activeGender}`} className="btn btn-outline">
               View {activeGender === 'male' ? 'Male' : 'Female'} P4P Rankings
             </Link>
           </div>
+          */}
         </div>
       </section>
     </>

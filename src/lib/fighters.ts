@@ -8,11 +8,43 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Fighter } from './types';
+import type { Fighter, DivisionRanking } from './types';
 
 const FIGHTERS_COLLECTION = 'fighters';
 
+function parseRanking(raw: Record<string, unknown>): DivisionRanking {
+  return {
+    rank: (raw.rank as number) ?? null,
+    titleHolder: typeof raw.titleHolder === 'string'
+      ? raw.titleHolder
+      : (raw.titleHolder ? 'Champion' : ''),
+    titleDate: (raw.titleDate as string) ?? null,
+  };
+}
+
 function docToFighter(id: string, data: Record<string, unknown>): Fighter {
+  // Support both new (divisions/rankings) and legacy (division/rank/titleHolder) format
+  const divisions: string[] = Array.isArray(data.divisions)
+    ? data.divisions as string[]
+    : data.division ? [data.division as string] : [];
+
+  const rankings: Record<string, DivisionRanking> = {};
+  if (data.rankings && typeof data.rankings === 'object' && !Array.isArray(data.rankings)) {
+    const raw = data.rankings as Record<string, Record<string, unknown>>;
+    for (const [divId, r] of Object.entries(raw)) {
+      rankings[divId] = parseRanking(r);
+    }
+  } else if (divisions.length > 0) {
+    // Legacy single-division format — migrate on read
+    rankings[divisions[0]] = {
+      rank: (data.rank as number) ?? null,
+      titleHolder: typeof data.titleHolder === 'string'
+        ? data.titleHolder
+        : (data.titleHolder ? 'Champion' : ''),
+      titleDate: (data.titleDate as string) ?? null,
+    };
+  }
+
   return {
     id,
     firstName: (data.firstName as string) ?? '',
@@ -20,14 +52,11 @@ function docToFighter(id: string, data: Record<string, unknown>): Fighter {
     nickname: (data.nickname as string) ?? '',
     gym: (data.gym as string) ?? '',
     state: (data.state as string) ?? '',
-    division: (data.division as string) ?? '',
-    weightClass: (data.weightClass as string) ?? '',
+    divisions,
+    rankings,
     gender: (data.gender as 'male' | 'female') ?? 'male',
     nationality: (data.nationality as string) ?? '',
-    rank: (data.rank as number) ?? null,
     p4pRank: (data.p4pRank as number) ?? null,
-    titleHolder: (data.titleHolder as boolean) ?? false,
-    titleDate: (data.titleDate as string) ?? null,
     bio: (data.bio as string) ?? '',
     photoURL: (data.photoURL as string) ?? '',
     record: (data.record as string) ?? '',
@@ -49,13 +78,13 @@ export async function getFighterById(id: string): Promise<Fighter | null> {
 export async function getFightersByDivision(divisionId: string): Promise<Fighter[]> {
   const q = query(
     collection(db, FIGHTERS_COLLECTION),
-    where('division', '==', divisionId),
+    where('divisions', 'array-contains', divisionId),
     where('status', '==', 'approved'),
   );
   const snap = await getDocs(q);
   return snap.docs
     .map(d => docToFighter(d.id, d.data()))
-    .sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
+    .sort((a, b) => (a.rankings[divisionId]?.rank ?? 999) - (b.rankings[divisionId]?.rank ?? 999));
 }
 
 export async function getP4PFighters(gender: 'male' | 'female'): Promise<Fighter[]> {

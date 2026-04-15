@@ -17,7 +17,7 @@ service cloud.firestore {
 
       // Admin can do anything
       allow create, delete: if isAdmin();
-      allow update: if isAdmin(); 
+      allow update: if isAdmin();
 
       // Fighter can create their own doc (registration) with pending status
       allow create: if request.auth != null
@@ -27,10 +27,9 @@ service cloud.firestore {
       // Fighter can update their own profile (limited fields)
       allow update: if isOwner(resource.data.uid)
         && request.resource.data.status == resource.data.status
-        && request.resource.data.rank == resource.data.rank
+        && request.resource.data.rankings == resource.data.rankings
         && request.resource.data.p4pRank == resource.data.p4pRank
-        && request.resource.data.titleHolder == resource.data.titleHolder
-        && request.resource.data.division == resource.data.division
+        && request.resource.data.divisions == resource.data.divisions
         && request.resource.data.gender == resource.data.gender;
 
       // Claim: authenticated user can link themselves to an unclaimed profile
@@ -38,10 +37,9 @@ service cloud.firestore {
         && resource.data.uid == null
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.status == resource.data.status
-        && request.resource.data.rank == resource.data.rank
+        && request.resource.data.rankings == resource.data.rankings
         && request.resource.data.p4pRank == resource.data.p4pRank
-        && request.resource.data.titleHolder == resource.data.titleHolder
-        && request.resource.data.division == resource.data.division
+        && request.resource.data.divisions == resource.data.divisions
         && request.resource.data.gender == resource.data.gender;
     }
 

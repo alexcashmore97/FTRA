@@ -1,3 +1,9 @@
+export interface DivisionRanking {
+  rank: number | null;
+  titleHolder: string;
+  titleDate: string | null;
+}
+
 export interface Fighter {
   id: string;
   firstName: string;
@@ -5,14 +11,11 @@ export interface Fighter {
   nickname: string;
   gym: string;
   state: string;
-  division: string;
-  weightClass: string;
+  divisions: string[];
+  rankings: Record<string, DivisionRanking>;
   gender: 'male' | 'female';
   nationality: string;
-  rank: number | null;
   p4pRank: number | null;
-  titleHolder: boolean;
-  titleDate: string | null;
   bio: string;
   photoURL: string;
   record: string;

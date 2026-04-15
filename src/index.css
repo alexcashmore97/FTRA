@@ -283,6 +283,17 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
   border-radius: 3px;
 }
 
+.ranking-title-badge.national {
+  background: #1a8a3e;
+  border: 1px solid var(--gold);
+  color: #fff;
+}
+
+.ranking-title-badge.state {
+  background: #1a8a3e;
+  color: #fff;
+}
+
 .empty-state {
   padding: 48px;
   text-align: center;

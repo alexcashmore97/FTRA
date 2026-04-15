@@ -4,6 +4,14 @@ import { getFighterById } from '@/lib/fighters';
 import { getDivisionById } from '@/lib/divisions';
 import type { Fighter } from '@/lib/types';
 
+function titleTier(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes('world')) return 'world';
+  if (t.includes('australian') || t.includes('national')) return 'national';
+  if (t.includes('state')) return 'state';
+  return '';
+}
+
 export default function FighterProfilePage() {
   const { id } = useParams<{ id: string }>();
 
@@ -44,8 +52,10 @@ export default function FighterProfilePage() {
     );
   }
 
-  const division = getDivisionById(fighter.division);
   const initials = `${fighter.firstName?.[0] ?? ''}${fighter.lastName?.[0] ?? ''}`;
+  const divisionEntries = fighter.divisions
+    .map(dId => ({ division: getDivisionById(dId), ranking: fighter.rankings[dId] }))
+    .filter(e => e.division);
 
   return (
     <div className="fighter-profile">
@@ -60,12 +70,15 @@ export default function FighterProfilePage() {
 
           <div className="fighter-details">
             <div className="fighter-rank-line">
-              {fighter.titleHolder && <span className="ranking-title-badge">Champion</span>}
-              {division && (
-                <Link to={`/rankings/${division.id}`} className="fighter-division-link">
-                  {division.name} — {division.weight}
-                </Link>
-              )}
+              {divisionEntries.map(({ division: div, ranking }) => (
+                <span key={div!.id} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  {ranking?.titleHolder && <span className={`ranking-title-badge ${titleTier(ranking.titleHolder)}`}>{ranking.titleHolder}</span>}
+                  <Link to={`/rankings/${div!.id}`} className="fighter-division-link">
+                    {div!.name} — {div!.weight}
+                    {ranking?.rank != null && !ranking.titleHolder && ` (#${ranking.rank})`}
+                  </Link>
+                </span>
+              ))}
             </div>
 
             <h1 className="fighter-name">

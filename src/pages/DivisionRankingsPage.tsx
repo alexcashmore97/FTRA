@@ -40,34 +40,43 @@ export default function DivisionRankingsPage() {
   }
 
   const genderDivisions = getDivisionsByGender(division.gender);
-  const champion = fighters.find(f => f.titleHolder);
+  const divId = division.id;
+  const oppositeId = division.gender === 'male'
+    ? division.id.replace('male-', 'female-')
+    : division.id.replace('female-', 'male-');
+  const oppositeExists = !!getDivisionById(oppositeId);
+  const champions = fighters.filter(f => f.rankings[divId]?.titleHolder);
   const ranked = fighters
-    .filter(f => !f.titleHolder && f.rank !== null)
-    .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
-
+    .filter(f => !f.rankings[divId]?.titleHolder && f.rankings[divId]?.rank !== null)
+    .sort((a, b) => (a.rankings[divId]?.rank ?? 99) - (b.rankings[divId]?.rank ?? 99));
+const rankingClassname = `rankings-banner-img-${division.name}`.split(' ').join('')
   return (
     <div className="rankings-page">
       {/* Division hero banner */}
       <div className="rankings-banner">
-        <img src={division.image} alt={division.name} className="rankings-banner-img" />
+        <img src={division.image} alt={division.name} className={`rankings-banner-img ${rankingClassname}`} />
         <div className="rankings-banner-overlay" />
       </div>
 
       <div className="container">
         <div className="rankings-header">
           <div className="rankings-gender-tabs">
-            <Link
-              to={`/rankings/${division.gender === 'male' ? division.id : division.id.replace('female-', 'male-')}`}
-              className={`gender-tab ${division.gender === 'male' ? 'active' : ''}`}
-            >
-              Male
-            </Link>
-            <Link
-              to={`/rankings/${division.gender === 'female' ? division.id : division.id.replace('male-', 'female-')}`}
-              className={`gender-tab ${division.gender === 'female' ? 'active' : ''}`}
-            >
-              Female
-            </Link>
+            {(division.gender === 'male' || oppositeExists) && (
+              <Link
+                to={`/rankings/${division.gender === 'male' ? division.id : oppositeId}`}
+                className={`gender-tab ${division.gender === 'male' ? 'active' : ''}`}
+              >
+                Male
+              </Link>
+            )}
+            {(division.gender === 'female' || oppositeExists) && (
+              <Link
+                to={`/rankings/${division.gender === 'female' ? division.id : oppositeId}`}
+                className={`gender-tab ${division.gender === 'female' ? 'active' : ''}`}
+              >
+                Female
+              </Link>
+            )}
           </div>
           <div className="rankings-division-title">
             <h1>{division.name}</h1>
@@ -94,9 +103,11 @@ export default function DivisionRankingsPage() {
           {error && <div className="empty-state">{error}</div>}
           {!loading && !error && (
             <>
-              {champion && <RankingRow fighter={champion} />}
+              {champions.map(fighter => (
+                <RankingRow key={fighter.id} fighter={fighter} divisionId={divId} />
+              ))}
               {ranked.map(fighter => (
-                <RankingRow key={fighter.id} fighter={fighter} />
+                <RankingRow key={fighter.id} fighter={fighter} divisionId={divId} />
               ))}
               {fighters.length === 0 && (
                 <div className="empty-state">

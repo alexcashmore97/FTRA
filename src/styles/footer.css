@@ -16,7 +16,7 @@
 }
 
 [data-theme="dark"] .footer-official {
-  background: linear-gradient(135deg, #0c1a0c 0%, #0a0a0a 40%, #1a0c0c 100%);
+  background: linear-gradient(135deg, #3a3a40 0%, #2e2e32 40%, #3a3834 100%);
 }
 
 .footer-official::before {

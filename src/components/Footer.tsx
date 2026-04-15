@@ -9,10 +9,8 @@ export default function Footer() {
         <div className="footer-official-inner container">
           <img src="/images/logos/wbc.avif" alt="WBC Muay Thai Australia" className="footer-wbc-logo" />
           <div className="footer-official-text">
-            <h3 className="footer-official-title">Official WBC Muay Thai Australia Rankings</h3>
-            <p className="footer-official-sub">
-              The only sanctioned national ranking system recognised by the World Boxing Council Muay Thai.
-            </p>
+            <h3 className="footer-official-title">Official WBC Muay Thai Rankings Partner</h3>
+            
           </div>
         </div>
       </div>
@@ -41,11 +39,13 @@ export default function Footer() {
           </div>
 
           <div className="footer-links">
+            {/* TODO: uncomment when P4P rankings are populated
             <div className="footer-col">
               <h4 className="footer-col-title">Rankings</h4>
               <Link to="/rankings/p4p?gender=male">Male P4P</Link>
               <Link to="/rankings/p4p?gender=female">Female P4P</Link>
             </div>
+            */}
             <div className="footer-col">
               <h4 className="footer-col-title">More</h4>
               <Link to="/contact">Contact</Link>

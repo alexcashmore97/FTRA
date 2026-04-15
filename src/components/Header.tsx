@@ -35,9 +35,11 @@ export default function Header() {
                 </svg>
               </button>
               <div className="nav-dropdown-menu">
+                {/* TODO: uncomment when P4P rankings are populated
                 <Link to="/rankings/p4p?gender=male" className="nav-dropdown-item">
                   <span>P4P Rankings</span>
                 </Link>
+                */}
                 {maleDivisions.map(div => (
                   <Link key={div.id} to={`/rankings/${div.id}`} className="nav-dropdown-item">
                     <span>{div.name}</span>
@@ -55,9 +57,11 @@ export default function Header() {
                 </svg>
               </button>
               <div className="nav-dropdown-menu">
+                {/* TODO: uncomment when P4P rankings are populated
                 <Link to="/rankings/p4p?gender=female" className="nav-dropdown-item">
                   <span>P4P Rankings</span>
                 </Link>
+                */}
                 {femaleDivisions.map(div => (
                   <Link key={div.id} to={`/rankings/${div.id}`} className="nav-dropdown-item">
                     <span>{div.name}</span>
@@ -134,7 +138,9 @@ export default function Header() {
 
         <div className="nav-mobile-section">
           <div className="nav-mobile-section-title">Male Rankings</div>
+          {/* TODO: uncomment when P4P rankings are populated
           <Link to="/rankings/p4p?gender=male" className="nav-mobile-link" onClick={closeMobile}>P4P Rankings</Link>
+          */}
           {maleDivisions.map(div => (
             <Link key={div.id} to={`/rankings/${div.id}`} className="nav-mobile-link" onClick={closeMobile}>
               {div.name} — {div.weight}
@@ -144,7 +150,9 @@ export default function Header() {
 
         <div className="nav-mobile-section">
           <div className="nav-mobile-section-title">Female Rankings</div>
+          {/* TODO: uncomment when P4P rankings are populated
           <Link to="/rankings/p4p?gender=female" className="nav-mobile-link" onClick={closeMobile}>P4P Rankings</Link>
+          */}
           {femaleDivisions.map(div => (
             <Link key={div.id} to={`/rankings/${div.id}`} className="nav-mobile-link" onClick={closeMobile}>
               {div.name} — {div.weight}

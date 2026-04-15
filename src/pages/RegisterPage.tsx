@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { getFighterById } from '@/lib/fighters';
-import { DIVISIONS, getDivisionsByGender } from '@/lib/divisions';
+import { getDivisionsByGender } from '@/lib/divisions';
 import type { Fighter } from '@/lib/types';
 import '@/styles/auth.css';
 
@@ -63,7 +63,7 @@ export default function RegisterPage() {
         setState(fighter.state);
         setNationality(fighter.nationality ?? '');
         setGender(fighter.gender);
-        setDivision(fighter.division);
+        setDivision(fighter.divisions[0] ?? '');
         setStance(fighter.stance);
         setRecord(fighter.record);
         setAge(fighter.age ? String(fighter.age) : '');
@@ -105,8 +105,6 @@ export default function RegisterPage() {
     try {
       // Create Firebase Auth account
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-      const divisionData = DIVISIONS.find(d => d.id === division);
-
       if (claimFighter && claimId) {
         // Claim flow: update existing fighter doc, linking the new UID
         await updateDoc(doc(db, 'fighters', claimId), {
@@ -132,17 +130,16 @@ export default function RegisterPage() {
           state,
           nationality: nationality.trim(),
           gender,
-          division,
-          weightClass: divisionData ? `${divisionData.name} ${divisionData.weight}` : '',
+          divisions: [division],
+          rankings: {
+            [division]: { rank: null, titleHolder: '', titleDate: null },
+          },
           stance,
           record: record.trim(),
           age: age ? parseInt(age, 10) : null,
           bio: bio.trim(),
           photoURL: '',
-          rank: null,
           p4pRank: null,
-          titleHolder: false,
-          titleDate: null,
           email,
           uid: cred.user.uid,
           status: 'pending',
