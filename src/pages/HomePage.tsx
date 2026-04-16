@@ -1,18 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DivisionCard from '@/components/DivisionCard';
 import { getDivisionsByGender } from '@/lib/divisions';
+import { getFighterCount } from '@/lib/fighters';
+import SEO from '@/components/SEO';
 import '@/styles/hero.css';
 
 export default function HomePage() {
   const [activeGender, setActiveGender] = useState<'male' | 'female'>('male');
+  const [fighterCount, setFighterCount] = useState<number | null>(null);
   const divisions = getDivisionsByGender(activeGender);
+
+  useEffect(() => {
+    getFighterCount().then(setFighterCount).catch(() => {});
+  }, []);
 
   return (
     <>
+      <SEO
+        title="Australian Muay Thai Rankings | Full Thai Rules Australia"
+        description="Official Australian Muay Thai rankings across 24 weight divisions. The home of Full Thai Rules Australia — honouring the warriors of Australian Muay Thai."
+        path="/"
+      />
       {/* Hero */}
       <section className="hero">
         <div className="hero-bg">
-          <img src="/images/hero/ring-atmosphere.jpg" alt="" className="hero-bg-image" />
+          <img src="/images/hero/ring-atmosphere.jpg" alt="Muay Thai ring atmosphere" className="hero-bg-image" />
         </div>
         <div className="hero-content">
           <div className="hero-eyebrow">Full Thai Rules Australia</div>
@@ -39,7 +51,7 @@ export default function HomePage() {
           <div className="hero-stat-label">Weight Divisions</div>
         </div>
         <div className="hero-stat">
-          <div className="hero-stat-value">200+</div>
+          <div className="hero-stat-value">{fighterCount ?? '—'}</div>
           <div className="hero-stat-label">Ranked Fighters</div>
         </div>
         <div className="hero-stat">

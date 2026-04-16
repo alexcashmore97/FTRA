@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { getP4PFighters } from '@/lib/fighters';
 import type { Fighter } from '@/lib/types';
 import RankingRow from '@/components/RankingRow';
+import SEO from '@/components/SEO';
 
 export default function P4PRankingsPage() {
   const [searchParams] = useSearchParams();
@@ -23,6 +24,11 @@ export default function P4PRankingsPage() {
 
   return (
     <div className="rankings-page">
+      <SEO
+        title={`${gender === 'male' ? 'Male' : 'Female'} Pound for Pound Rankings | Australian Muay Thai | FTRA`}
+        description={`Official ${gender === 'male' ? 'Male' : 'Female'} Pound for Pound Australian Muay Thai rankings. The best fighters in Australia regardless of weight class.`}
+        path="/rankings/p4p"
+      />
       <div className="container">
         <div className="rankings-header">
           <div className="rankings-gender-tabs">

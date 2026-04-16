@@ -1,6 +1,13 @@
+import SEO from '@/components/SEO';
+
 export default function ContactPage() {
   return (
     <div className="rankings-page">
+      <SEO
+        title="Contact Us | Full Thai Rules Australia"
+        description="Get in touch with Full Thai Rules Australia for ranking enquiries, partnership opportunities, event submissions, or general questions."
+        path="/contact"
+      />
       <div className="container" style={{ maxWidth: '640px' }}>
         <div className="rankings-header">
           <div className="label">Get in touch</div>

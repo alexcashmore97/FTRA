@@ -11,7 +11,7 @@ export default function DivisionCard({ division }: Props) {
   return (
     <Link to={`/rankings/${division.id}`} className="division-card">
       <div className={`division-card-image`}>
-        <img className={`${rankingClassname}`} src={division.image} alt={division.name} />
+        <img className={`${rankingClassname}`} src={division.image} alt={`${division.gender === 'male' ? 'Male' : 'Female'} ${division.name} ${division.weight} Australian Muay Thai division`} loading="lazy" />
       </div>
       <div className="division-card-content">
         <div className="division-card-name">{division.name}</div>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://fullthairulesaustralia.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/contact</loc><priority>0.5</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/p4p</loc><priority>0.8</priority></url>
+
+  <!-- Male Divisions -->
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-super-bantamweight-55</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-featherweight-57</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-super-featherweight-58</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-lightweight-61</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-super-lightweight-63</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-welterweight-66</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-super-welterweight-70</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-middleweight-72</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-super-middleweight-76</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-light-heavyweight-79</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-cruiserweight-90</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/male-heavyweight-91</loc><priority>0.8</priority></url>
+
+  <!-- Female Divisions -->
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-minimum-weight-45</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-mini-flyweight-47</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-light-flyweight-49</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-flyweight-50</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-super-flyweight-52</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-bantamweight-53</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-super-bantamweight-55</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-featherweight-57</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-super-featherweight-59</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-lightweight-61</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-super-lightweight-63</loc><priority>0.8</priority></url>
+  <url><loc>https://fullthairulesaustralia.com/rankings/female-light-heavyweight-79</loc><priority>0.8</priority></url>
+</urlset>

@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  getCountFromServer,
   query,
   where,
   orderBy,
@@ -106,6 +107,15 @@ export async function getAllFighters(): Promise<Fighter[]> {
   );
   const snap = await getDocs(q);
   return snap.docs.map(d => docToFighter(d.id, d.data()));
+}
+
+export async function getFighterCount(): Promise<number> {
+  const q = query(
+    collection(db, FIGHTERS_COLLECTION),
+    where('status', '==', 'approved'),
+  );
+  const snap = await getCountFromServer(q);
+  return snap.data().count;
 }
 
 export async function getPendingFighters(): Promise<Fighter[]> {

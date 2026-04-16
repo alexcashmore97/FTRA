@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /fighter-portal
+
+Sitemap: https://fullthairulesaustralia.com/sitemap.xml

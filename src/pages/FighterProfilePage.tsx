@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getFighterById } from '@/lib/fighters';
 import { getDivisionById } from '@/lib/divisions';
 import type { Fighter } from '@/lib/types';
+import SEO from '@/components/SEO';
 
 function titleTier(title: string): string {
   const t = title.toLowerCase();
@@ -57,13 +58,29 @@ export default function FighterProfilePage() {
     .map(dId => ({ division: getDivisionById(dId), ranking: fighter.rankings[dId] }))
     .filter(e => e.division);
 
+  const fullName = `${fighter.firstName} ${fighter.lastName}`;
+  const primaryDiv = divisionEntries[0]?.division;
+  const seoDesc = [
+    fullName,
+    primaryDiv ? `${primaryDiv.name} ${primaryDiv.weight}` : null,
+    fighter.gym,
+    fighter.state,
+  ].filter(Boolean).join(' — ');
+
   return (
     <div className="fighter-profile">
+      <SEO
+        title={`${fullName} | Australian Muay Thai Fighter | FTRA`}
+        description={`${seoDesc}. View rankings, record, and profile on Full Thai Rules Australia.`}
+        path={`/fighters/${id}`}
+        image={fighter.photoURL || undefined}
+        type="profile"
+      />
       <div className="container">
         <div className="fighter-hero">
           <div className="fighter-photo-wrapper">
             {fighter.photoURL
-              ? <img src={fighter.photoURL} alt={`${fighter.firstName} ${fighter.lastName}`} />
+              ? <img src={fighter.photoURL} alt={`${fighter.firstName} ${fighter.lastName}, Australian Muay Thai fighter`} loading="lazy" />
               : <div className="fighter-photo-placeholder">{initials}</div>
             }
           </div>

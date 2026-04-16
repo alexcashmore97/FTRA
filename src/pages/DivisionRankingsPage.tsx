@@ -4,6 +4,7 @@ import { getDivisionById, getDivisionsByGender } from '@/lib/divisions';
 import { getFightersByDivision } from '@/lib/fighters';
 import type { Fighter } from '@/lib/types';
 import RankingRow from '@/components/RankingRow';
+import SEO from '@/components/SEO';
 
 export default function DivisionRankingsPage() {
   const { divisionId } = useParams<{ divisionId: string }>();
@@ -52,9 +53,14 @@ export default function DivisionRankingsPage() {
 const rankingClassname = `rankings-banner-img-${division.name}`.split(' ').join('')
   return (
     <div className="rankings-page">
+      <SEO
+        title={`${division.name} ${division.weight} Rankings | Australian Muay Thai | FTRA`}
+        description={`Official ${division.gender === 'male' ? 'Male' : 'Female'} ${division.name} ${division.weight} Australian Muay Thai rankings. View current champions and ranked fighters.`}
+        path={`/rankings/${division.id}`}
+      />
       {/* Division hero banner */}
       <div className="rankings-banner">
-        <img src={division.image} alt={division.name} className={`rankings-banner-img ${rankingClassname}`} />
+        <img src={division.image} alt={`${division.gender === 'male' ? 'Male' : 'Female'} ${division.name} ${division.weight} division`} loading="lazy" className={`rankings-banner-img ${rankingClassname}`} />
         <div className="rankings-banner-overlay" />
       </div>
 

@@ -46,7 +46,7 @@ export default function RankingRow({ fighter, divisionId, showDivision = false }
       <div className="ranking-fighter-info">
         <div className="ranking-fighter-photo">
           {fighter.photoURL
-            ? <img src={fighter.photoURL} alt={`${fighter.firstName} ${fighter.lastName}`} />
+            ? <img src={fighter.photoURL} alt={`${fighter.firstName} ${fighter.lastName}, ranked Muay Thai fighter`} loading="lazy" />
             : initials
           }
         </div>
