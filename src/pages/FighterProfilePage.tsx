@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getFighterById } from '@/lib/fighters';
 import { getDivisionById } from '@/lib/divisions';
+import { useAuth } from '@/lib/auth';
 import type { Fighter } from '@/lib/types';
 import SEO from '@/components/SEO';
 
@@ -15,6 +16,8 @@ function titleTier(title: string): string {
 
 export default function FighterProfilePage() {
   const { id } = useParams<{ id: string }>();
+  const { role } = useAuth();
+  const isAdmin = role === 'admin';
 
   const [fighter, setFighter] = useState<Fighter | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,10 +28,16 @@ export default function FighterProfilePage() {
     setLoading(true);
     setError(null);
     getFighterById(id)
-      .then(setFighter)
+      .then(f => {
+        if (f && f.status !== 'approved' && !isAdmin) {
+          setFighter(null);
+        } else {
+          setFighter(f);
+        }
+      })
       .catch(() => setError('Failed to load fighter profile.'))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isAdmin]);
 
   if (loading) {
     return (

@@ -67,6 +67,50 @@
   max-width: 520px;
 }
 
+.fighter-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-hide {
+  color: var(--accent-coral, #e74c3c);
+  border-color: var(--accent-coral, #e74c3c);
+  background: transparent;
+}
+
+.btn-hide:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.btn-approve {
+  color: var(--accent-green, #2ecc71);
+  border-color: var(--accent-green, #2ecc71);
+  background: transparent;
+}
+
+.btn-approve:hover:not(:disabled) {
+  background: rgba(46, 204, 113, 0.1);
+}
+
+.btn-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .fighter-editor-layout {
     grid-template-columns: 1fr;

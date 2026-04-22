@@ -5,6 +5,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
 import { getDivisionById } from '@/lib/divisions';
+import { writeLog } from '@/lib/adminLog';
 import type { DivisionRanking } from '@/lib/types';
 import type { Fighter } from '@/lib/types';
 import '@/styles/auth.css';
@@ -19,6 +20,7 @@ export default function FighterEditorPage() {
   const [fighter, setFighter] = useState<Fighter | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [toggling, setToggling] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -121,6 +123,25 @@ export default function FighterEditorPage() {
       setMessage('Failed to save profile.');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleToggleApproval() {
+    if (!fighter || !isAdmin) return;
+    const newStatus = fighter.status === 'approved' ? 'pending' : 'approved';
+    setToggling(true);
+    setMessage(null);
+    try {
+      await updateDoc(doc(db, 'fighters', id!), { status: newStatus });
+      const action = newStatus === 'pending' ? 'fighter_hidden' : 'fighter_approved';
+      const detail = `${fighter.firstName} ${fighter.lastName} status set to ${newStatus}`;
+      await writeLog(action, detail, user?.email || 'unknown');
+      setFighter({ ...fighter, status: newStatus });
+      setMessage(newStatus === 'pending' ? 'Fighter hidden from rankings.' : 'Fighter approved and visible.');
+    } catch {
+      setMessage('Failed to update approval status.');
+    } finally {
+      setToggling(false);
     }
   }
 
@@ -244,9 +265,26 @@ export default function FighterEditorPage() {
 
           {message && <div className="admin-message">{message}</div>}
 
-          <button type="submit" className="btn btn-primary auth-submit" disabled={saving}>
-            {saving ? 'Saving...' : 'Save Profile'}
-          </button>
+          <div className="fighter-editor-actions">
+            <button type="submit" className="btn btn-primary auth-submit" disabled={saving}>
+              {saving ? 'Saving...' : 'Save Profile'}
+            </button>
+            {isAdmin && (
+              <button
+              style={{marginTop:'10px'}}
+                type="button"
+                className={`btn btn-small ${fighter.status === 'approved' ? 'btn-hide' : 'btn-approve'}`}
+                disabled={toggling}
+                onClick={handleToggleApproval}
+              >
+                {toggling
+                  ? '...'
+                  : fighter.status === 'approved'
+                    ? 'Hide'
+                    : 'Approve'}
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>
