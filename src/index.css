@@ -262,6 +262,8 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
   background: linear-gradient(135deg, var(--gold-dark), var(--gold));
   border-color: var(--gold);
   color: #111;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
 }
 
 .rank-badge.top-five {

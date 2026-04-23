@@ -40,7 +40,7 @@ export default function RankingRow({ fighter, divisionId, showDivision = false }
   return (
     <Link to={`/fighters/${fighter.id}`} className={`ranking-row ${isChampion ? 'champion' : ''}`}>
       <div className={`rank-badge ${isChampion ? 'champion' : isTopFive ? 'top-five' : ''}`}>
-        {isChampion ? 'C' : rank ?? '—'}
+        {isChampion ? ({ world: 'WC', national: 'NC', state: 'SC' }[titleTier(title)] ?? 'C') : rank ?? '—'}
       </div>
 
       <div className="ranking-fighter-info">
