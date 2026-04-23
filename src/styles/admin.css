@@ -98,6 +98,11 @@
   text-decoration: underline;
 }
 
+.admin-fighter-email {
+  font-size: 0.75rem;
+  color: var(--primary);
+}
+
 .admin-fighter-meta {
   font-size: 0.75rem;
   color: var(--text-muted);

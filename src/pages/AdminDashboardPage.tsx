@@ -447,6 +447,7 @@ export default function AdminDashboardPage() {
                   <div key={fighter.id} className="admin-ranking-row">
                     <div className="admin-fighter-info" style={{ gridColumn: '1 / 3' }}>
                       <span className="admin-fighter-name">{fighter.firstName} {fighter.lastName}</span>
+                      {fighter.email && <span className="admin-fighter-email">{fighter.email}</span>}
                       <span className="admin-fighter-meta">
                         {fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}
                         {fighter.nationality ? ` — ${fighter.nationality}` : ''}
