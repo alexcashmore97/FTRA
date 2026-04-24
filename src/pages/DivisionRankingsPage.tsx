@@ -46,9 +46,8 @@ export default function DivisionRankingsPage() {
     ? division.id.replace('male-', 'female-')
     : division.id.replace('female-', 'male-');
   const oppositeExists = !!getDivisionById(oppositeId);
-  const champions = fighters.filter(f => f.rankings[divId]?.titleHolder);
   const ranked = fighters
-    .filter(f => !f.rankings[divId]?.titleHolder && f.rankings[divId]?.rank !== null)
+    .filter(f => f.rankings[divId]?.titleHolder || f.rankings[divId]?.rank !== null)
     .sort((a, b) => (a.rankings[divId]?.rank ?? 99) - (b.rankings[divId]?.rank ?? 99));
 const rankingClassname = `rankings-banner-img-${division.name}`.split(' ').join('')
   return (
@@ -109,9 +108,6 @@ const rankingClassname = `rankings-banner-img-${division.name}`.split(' ').join(
           {error && <div className="empty-state">{error}</div>}
           {!loading && !error && (
             <>
-              {champions.map(fighter => (
-                <RankingRow key={fighter.id} fighter={fighter} divisionId={divId} />
-              ))}
               {ranked.map(fighter => (
                 <RankingRow key={fighter.id} fighter={fighter} divisionId={divId} />
               ))}

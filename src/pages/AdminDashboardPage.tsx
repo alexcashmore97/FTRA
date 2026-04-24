@@ -193,8 +193,6 @@ export default function AdminDashboardPage() {
         list.sort((a, b) => {
           const aR = divRanking(a, did);
           const bR = divRanking(b, did);
-          if (aR.titleHolder && !bR.titleHolder) return -1;
-          if (!aR.titleHolder && bR.titleHolder) return 1;
           if (aR.rank === null && bR.rank === null) return 0;
           if (aR.rank === null) return 1;
           if (bR.rank === null) return -1;
