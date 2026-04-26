@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, getDocs, writeBatch, doc, query, where, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -6,11 +6,13 @@ import { useAuth } from '@/lib/auth';
 import { DIVISIONS, getDivisionsByGender, getDivisionById, type Division } from '@/lib/divisions';
 import { getPendingFighters } from '@/lib/fighters';
 import { writeLog, getLogEntries, type LogEntry } from '@/lib/adminLog';
-import type { Fighter, DivisionRanking } from '@/lib/types';
+import { getAllShows, addShow, updateShow, deleteShow, uploadShowImage } from '@/lib/shows';
+import type { Fighter, DivisionRanking, Show } from '@/lib/types';
 import '@/styles/auth.css';
 import '@/styles/admin.css';
+import '@/styles/shows.css';
 
-type Tab = 'approvals' | 'division' | 'p4p' | 'log';
+type Tab = 'approvals' | 'division' | 'p4p' | 'shows' | 'log';
 
 // Rank input with local state — only commits to parent on blur/Enter so that
 // mid-typing values don't trigger the auto-compaction logic.
@@ -96,6 +98,9 @@ export default function AdminDashboardPage() {
     if (tab === 'approvals') loadPending();
     if (tab === 'log') loadLog();
   }, [tab]);
+
+  // ---- Shows ----
+  // (rendered via <ShowsManager /> below — keeps this file's state surface focused on rankings)
 
   useEffect(() => {
     setSearch('');
@@ -185,6 +190,7 @@ export default function AdminDashboardPage() {
           email: (data.email as string) ?? '',
           uid: (data.uid as string) ?? null,
           status: (data.status as 'pending' | 'approved') ?? 'approved',
+          note:(data.note)??''
         };
       });
 
@@ -422,10 +428,16 @@ export default function AdminDashboardPage() {
         <button className={`gender-tab ${tab === 'p4p' ? 'active' : ''}`} onClick={() => setTab('p4p')}>
           P4P Rankings
         </button>
+        <button className={`gender-tab ${tab === 'shows' ? 'active' : ''}`} onClick={() => setTab('shows')}>
+          Shows
+        </button>
         <button className={`gender-tab ${tab === 'log' ? 'active' : ''}`} onClick={() => setTab('log')}>
           Log
         </button>
       </div>
+
+      {/* ---- Shows ---- */}
+      {tab === 'shows' && <ShowsManager adminEmail={adminEmail} />}
 
       {/* ---- Approvals ---- */}
       {tab === 'approvals' && (
@@ -452,6 +464,7 @@ export default function AdminDashboardPage() {
                         {divNames ? ` — ${divNames}` : ''}
                         {fighter.stance ? ` — ${fighter.stance}` : ''}
                         {fighter.record ? ` — ${fighter.record}` : ''}
+                        {fighter.note?`\nRecent results: ${fighter.note}`:''}
                       </span>
                     </div>
                     <div className="admin-approval-actions">
@@ -611,11 +624,233 @@ export default function AdminDashboardPage() {
   );
 }
 
+// ============================================================
+// Shows Manager — upload posters, set ticket links, toggle active
+// ============================================================
+function ShowsManager({ adminEmail }: { adminEmail: string }) {
+  const [shows, setShows] = useState<Show[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  // New-show form state
+  const [newTitle, setNewTitle] = useState('');
+  const [newTicketURL, setNewTicketURL] = useState('');
+  const [newEventDate, setNewEventDate] = useState('');
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [creating, setCreating] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function load() {
+    setLoading(true);
+    try {
+      setShows(await getAllShows());
+    } catch {
+      setMessage('Failed to load shows.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCreate() {
+    if (!newFile) {
+      setMessage('Please select a poster image.');
+      return;
+    }
+    if (!newTicketURL.trim()) {
+      setMessage('Please enter a ticket URL.');
+      return;
+    }
+    setCreating(true);
+    setMessage(null);
+    try {
+      const id = await addShow({
+        title: newTitle.trim(),
+        imageURL: '',
+        ticketURL: newTicketURL.trim(),
+        eventDate: newEventDate || null,
+        active: true,
+      });
+      const url = await uploadShowImage(id, newFile);
+      await updateShow(id, { imageURL: url });
+      await writeLog('show_added', `${newTitle || '(untitled)'} — ${newEventDate || 'no date'}`, adminEmail);
+      setNewTitle('');
+      setNewTicketURL('');
+      setNewEventDate('');
+      setNewFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      setMessage('Show added.');
+      await load();
+    } catch (err) {
+      console.error('Create show error:', err);
+      setMessage('Failed to add show.');
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function handleReplaceImage(show: Show, e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusyId(show.id);
+    try {
+      const url = await uploadShowImage(show.id, file);
+      await updateShow(show.id, { imageURL: url });
+      setShows(prev => prev.map(s => s.id === show.id ? { ...s, imageURL: url } : s));
+      setMessage('Poster updated.');
+    } catch {
+      setMessage('Failed to upload poster.');
+    } finally {
+      setBusyId(null);
+      e.target.value = '';
+    }
+  }
+
+  async function handleField(show: Show, patch: Partial<Show>) {
+    setShows(prev => prev.map(s => s.id === show.id ? { ...s, ...patch } : s));
+    try {
+      await updateShow(show.id, patch);
+    } catch {
+      setMessage('Failed to save change.');
+    }
+  }
+
+  async function handleDelete(show: Show) {
+    if (!confirm(`Delete "${show.title || 'untitled show'}"? This cannot be undone.`)) return;
+    setBusyId(show.id);
+    try {
+      await deleteShow(show.id, show.imageURL);
+      await writeLog('show_deleted', `${show.title || '(untitled)'} — ${show.eventDate || 'no date'}`, adminEmail);
+      setShows(prev => prev.filter(s => s.id !== show.id));
+      setMessage('Show deleted.');
+    } catch {
+      setMessage('Failed to delete show.');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
+        Active shows appear in the home page carousel. Shows automatically hide once the event date passes.
+      </p>
+
+      {/* Existing shows */}
+      {loading ? (
+        <div className="empty-state">Loading shows...</div>
+      ) : shows.length === 0 ? (
+        <div className="empty-state">No shows yet. Add one below.</div>
+      ) : (
+        <div className="admin-shows-list">
+          {shows.map(show => (
+            <div key={show.id} className={`admin-show-row ${show.active ? '' : 'inactive'}`}>
+              {show.imageURL ? (
+                <img src={show.imageURL} alt={show.title} className="admin-show-thumb" />
+              ) : (
+                <div className="admin-show-thumb-placeholder">No image</div>
+              )}
+              <div className="admin-show-fields">
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Show title"
+                  value={show.title}
+                  onChange={e => handleField(show, { title: e.target.value })}
+                />
+                <div className="admin-show-row-fields-grid">
+                  <input
+                    className="input"
+                    type="url"
+                    placeholder="Ticket URL"
+                    value={show.ticketURL}
+                    onChange={e => handleField(show, { ticketURL: e.target.value })}
+                  />
+                  <input
+                    className="input"
+                    type="date"
+                    value={show.eventDate ?? ''}
+                    onChange={e => handleField(show, { eventDate: e.target.value || null })}
+                  />
+                  <label className="btn btn-ghost" style={{ fontSize: '0.7rem', padding: '6px 10px', textAlign: 'center', cursor: 'pointer' }}>
+                    {busyId === show.id ? 'Uploading…' : 'Replace image'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={e => handleReplaceImage(show, e)}
+                    />
+                  </label>
+                </div>
+              </div>
+              <div className="admin-show-actions">
+                <button
+                  className={`admin-show-toggle ${show.active ? 'active' : ''}`}
+                  onClick={() => handleField(show, { active: !show.active })}
+                >
+                  {show.active ? 'Active' : 'Hidden'}
+                </button>
+                <button className="admin-reject-btn" onClick={() => handleDelete(show)} disabled={busyId === show.id}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add new show */}
+      <div className="admin-show-add">
+        <h4>Add Upcoming Show</h4>
+        <input
+          className="input"
+          type="text"
+          placeholder="Show title (e.g. Domination 12)"
+          value={newTitle}
+          onChange={e => setNewTitle(e.target.value)}
+        />
+        <input
+          className="input"
+          type="url"
+          placeholder="Ticket URL (https://...)"
+          value={newTicketURL}
+          onChange={e => setNewTicketURL(e.target.value)}
+        />
+        <input
+          className="input"
+          type="date"
+          placeholder="Event date"
+          value={newEventDate}
+          onChange={e => setNewEventDate(e.target.value)}
+        />
+        <input
+          ref={fileInputRef}
+          className="input"
+          type="file"
+          accept="image/*"
+          onChange={e => setNewFile(e.target.files?.[0] ?? null)}
+        />
+        <button className="btn btn-primary" onClick={handleCreate} disabled={creating}>
+          {creating ? 'Adding…' : 'Add Show'}
+        </button>
+      </div>
+
+      {message && <div className="admin-message" style={{ marginTop: 12 }}>{message}</div>}
+    </div>
+  );
+}
+
 function formatAction(action: string): string {
   switch (action) {
     case 'ranking_update': return 'Ranking Update';
     case 'fighter_approved': return 'Fighter Approved';
     case 'fighter_rejected': return 'Fighter Rejected';
+    case 'show_added': return 'Show Added';
+    case 'show_deleted': return 'Show Deleted';
     default: return action;
   }
 }

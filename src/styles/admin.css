@@ -104,6 +104,7 @@
 }
 
 .admin-fighter-meta {
+  white-space: break-spaces;
   font-size: 0.75rem;
   color: var(--text-muted);
 }

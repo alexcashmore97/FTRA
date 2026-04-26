@@ -10,13 +10,19 @@ service firebase.storage {
         (request.auth.uid == uid || isAdmin());
     }
 
+    // Show posters: public read, admin write
+    match /shows/{showId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Default: deny all
     match /{allPaths=**} {
       allow read, write: if false;
     }
 
     function isAdmin() {
-      return firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+      return request.auth != null && request.auth.token.admin == true;
     }
   }
 }

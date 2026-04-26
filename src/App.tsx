@@ -5,6 +5,7 @@ import DivisionRankingsPage from '@/pages/DivisionRankingsPage';
 import P4PRankingsPage from '@/pages/P4PRankingsPage';
 import FighterProfilePage from '@/pages/FighterProfilePage';
 import ContactPage from '@/pages/ContactPage';
+import SearchPage from '@/pages/SearchPage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import AdminDashboardPage from '@/pages/AdminDashboardPage';
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/rankings/:divisionId" element={<DivisionRankingsPage />} />
         <Route path="/fighters/:id" element={<FighterProfilePage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/search" element={<SearchPage />} />
 
         {/* Auth */}
         <Route path="/login" element={<LoginPage />} />

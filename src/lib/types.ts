@@ -5,6 +5,7 @@ export interface DivisionRanking {
 }
 
 export interface Fighter {
+  note?: string|undefined;
   id: string;
   firstName: string;
   lastName: string;
@@ -31,4 +32,14 @@ export interface AdminUser {
   uid: string;
   email: string;
   role: 'admin';
+}
+
+export interface Show {
+  id: string;
+  title: string;
+  imageURL: string;
+  ticketURL: string;
+  eventDate: string | null;
+  active: boolean;
+  createdAt: number;
 }

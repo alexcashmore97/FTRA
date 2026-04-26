@@ -18,3 +18,5 @@ dist/
 
 # Firebase
 .firebase/
+scripts/service-account.json
+scripts/service-account*.json

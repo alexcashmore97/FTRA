@@ -67,6 +67,7 @@ function docToFighter(id: string, data: Record<string, unknown>): Fighter {
     email: (data.email as string) ?? '',
     uid: (data.uid as string) ?? null,
     status: (data.status as 'pending' | 'approved') ?? 'approved',
+    note: (data.note as string) ?? ''
   };
 }
 

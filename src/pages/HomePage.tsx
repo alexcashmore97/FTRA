@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import DivisionCard from '@/components/DivisionCard';
+import ShowsCarousel from '@/components/ShowsCarousel';
 import { getDivisionsByGender } from '@/lib/divisions';
 import { getFighterCount } from '@/lib/fighters';
 import SEO from '@/components/SEO';
@@ -43,6 +44,9 @@ export default function HomePage() {
         </div>
 
       </section>
+
+      {/* Upcoming shows carousel — renders nothing if no active shows */}
+      <ShowsCarousel />
 
       {/* Stats */}
       <section className="hero-stats">

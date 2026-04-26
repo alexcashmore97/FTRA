@@ -54,6 +54,12 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // Shows: public read (used on home page carousel), admin write
+    match /shows/{showId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     function isAdmin() {
       return request.auth != null &&
         exists(/databases/$(database)/documents/admins/$(request.auth.uid));

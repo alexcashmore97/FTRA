@@ -71,7 +71,7 @@ export default function Header() {
               </div>
             </div>
 
-            <Link to="/contact" className="nav-link">Contact</Link>
+            <Link to="/search" className="nav-link">Fighter Search</Link>
 
             {!user && (
               <>
@@ -160,7 +160,7 @@ export default function Header() {
           ))}
         </div>
 
-        <Link to="/contact" className="nav-mobile-link" onClick={closeMobile}>Contact</Link>
+        <Link to="/search" className="nav-mobile-link" onClick={closeMobile}>Fighter Search</Link>
 
         <div className="nav-mobile-section">
           {!user && (

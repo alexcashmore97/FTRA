@@ -34,9 +34,10 @@ export default function RegisterPage() {
   const [state, setState] = useState('');
   const [nationality, setNationality] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
-  const [division, setDivision] = useState('');
+  const [selectedDivisions, setSelectedDivisions] = useState<string[]>([]);
   const [stance, setStance] = useState('');
   const [record, setRecord] = useState('');
+  const [note,setNote] = useState('')
   const [age, setAge] = useState('');
   const [bio, setBio] = useState('');
 
@@ -63,7 +64,7 @@ export default function RegisterPage() {
         setState(fighter.state);
         setNationality(fighter.nationality ?? '');
         setGender(fighter.gender);
-        setDivision(fighter.divisions[0] ?? '');
+        setSelectedDivisions(fighter.divisions ?? []);
         setStance(fighter.stance);
         setRecord(fighter.record);
         setAge(fighter.age ? String(fighter.age) : '');
@@ -95,8 +96,8 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!division) {
-      setError('Please select a division.');
+    if (selectedDivisions.length === 0) {
+      setError('Please select at least one division.');
       return;
     }
 
@@ -130,10 +131,10 @@ export default function RegisterPage() {
           state,
           nationality: nationality.trim(),
           gender,
-          divisions: [division],
-          rankings: {
-            [division]: { rank: null, titleHolder: '', titleDate: null },
-          },
+          divisions: selectedDivisions,
+          rankings: Object.fromEntries(
+            selectedDivisions.map(d => [d, { rank: null, titleHolder: '', titleDate: null }])
+          ),
           stance,
           record: record.trim(),
           age: age ? parseInt(age, 10) : null,
@@ -143,6 +144,7 @@ export default function RegisterPage() {
           email,
           uid: cred.user.uid,
           status: 'pending',
+          note:note?note.trim():''
         });
         navigate(`/fighter-portal/${cred.user.uid}`);
       }
@@ -260,17 +262,35 @@ export default function RegisterPage() {
         <div className="register-row">
           <div className="auth-field">
             <label className="label">Gender *</label>
-            <select className="input" required value={gender} onChange={e => { setGender(e.target.value as 'male' | 'female'); setDivision(''); }} style={{ appearance: 'auto' }} disabled={isClaim}>
+            <select className="input" required value={gender} onChange={e => { setGender(e.target.value as 'male' | 'female'); setSelectedDivisions([]); }} style={{ appearance: 'auto' }} disabled={isClaim}>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
           </div>
-          <div className="auth-field">
-            <label className="label">Division *</label>
-            <select className="input" required value={division} onChange={e => setDivision(e.target.value)} style={{ appearance: 'auto' }} disabled={isClaim}>
-              <option value="">Select division...</option>
-              {divisions.map(d => <option key={d.id} value={d.id}>{d.name} — {d.weight}</option>)}
-            </select>
+        </div>
+
+        <div className="auth-field">
+          <label className="label">Choose Division(s) *</label>
+          <div className="division-chips" role="group" aria-label="Divisions">
+            {divisions.map(d => {
+              const checked = selectedDivisions.includes(d.id);
+              return (
+                <button
+                  key={d.id}
+                  type="button"
+                  className={`division-chip${checked ? ' is-selected' : ''}`}
+                  aria-pressed={checked}
+                  disabled={isClaim}
+                  onClick={() => {
+                    setSelectedDivisions(prev =>
+                      prev.includes(d.id) ? prev.filter(x => x !== d.id) : [...prev, d.id]
+                    );
+                  }}
+                >
+                  {d.name} — {d.weight}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -289,6 +309,13 @@ export default function RegisterPage() {
             <input className="input" value={record} onChange={e => setRecord(e.target.value)} placeholder="e.g. 12-3-0" />
           </div>
         </div>
+       
+          <div className="auth-field">
+<label className="label">Last 3 Opponents (Name and Result W/L/D) </label>
+            <input className="input" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. John Doe (W)" maxLength={240} />
+
+          </div>
+       
 
         <div className="auth-field">
           <label className="label">Bio</label>
