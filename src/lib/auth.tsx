@@ -76,11 +76,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('Failed to resolve user role:', err);
       }
 
-      // Authenticated but no role assigned (or lookup failed)
-      setRole(null);
-      setFighterId(null);
-      setFighterStatus(null);
-      setLoading(false);
+      // Authenticated but no role assigned. Could be a rejected fighter whose
+      // doc was deleted, or a brand-new registrant whose Firestore write
+      // hasn't landed yet. Honour an in-flight registration flag; otherwise
+      // sign them out and surface a reason on the login page.
+      if (sessionStorage.getItem('auth-registering') === '1') {
+        setRole(null);
+        setFighterId(null);
+        setFighterStatus(null);
+        setLoading(false);
+        return;
+      }
+
+      sessionStorage.setItem('signOutReason', 'no-profile');
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error('Auto sign-out failed:', err);
+      }
+      // signOut triggers another onAuthStateChanged firing with null,
+      // which clears state via the early return at the top.
     });
 
     return unsubscribe;

@@ -114,6 +114,7 @@ export default function RegisterPage() {
     }
 
     setSubmitting(true);
+    sessionStorage.setItem('auth-registering', '1');
 
     try {
       let cred: UserCredential;
@@ -143,9 +144,9 @@ export default function RegisterPage() {
         }
 
         // Signed into an existing Auth account. Refuse only if an *approved*
-        // fighter doc is already linked to this UID. Pending docs are allowed
-        // to proceed (e.g. a still-unapproved registrant claiming an existing
-        // profile instead).
+        // fighter doc is already linked. Pending docs are allowed through —
+        // admin resolves any duplicate by preferring the claim over the fresh
+        // registration when reviewing approvals.
         const linked = await getDocs(
           query(collection(db, 'fighters'), where('uid', '==', cred.user.uid))
         );
@@ -183,7 +184,7 @@ export default function RegisterPage() {
           pendingClaim: true,
           claimSnapshot,
         });
-        navigate(`/fighter-portal/${claimId}`);
+        navigate(`/fighter-portal/${claimId}`, { replace: true });
       } else {
         // Normal registration: create new fighter doc
         await setDoc(doc(db, 'fighters', cred.user.uid), {
@@ -210,13 +211,14 @@ export default function RegisterPage() {
           status: 'pending',
           note: note ? note.trim() : '',
         });
-        navigate(`/fighter-portal/${cred.user.uid}`);
+        navigate(`/fighter-portal/${cred.user.uid}`, { replace: true });
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Registration failed.';
       setError(message);
     } finally {
       setSubmitting(false);
+      sessionStorage.removeItem('auth-registering');
     }
   }
 
@@ -243,7 +245,7 @@ export default function RegisterPage() {
     );
   }
 
-  if (blockedClaim) {
+  if (blockedClaim && !submitting) {
     return (
       <div className="page-wrapper section container" style={{ maxWidth: 640 }}>
         <div className="section-header" style={{ textAlign: 'center' }}>

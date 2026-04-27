@@ -1,5 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
 import '@/styles/auth.css';
 
@@ -10,6 +12,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [resetSending, setResetSending] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [signOutReason, setSignOutReason] = useState<string | null>(() =>
+    typeof window !== 'undefined' ? sessionStorage.getItem('signOutReason') : null
+  );
+
+  useEffect(() => {
+    if (signOutReason) sessionStorage.removeItem('signOutReason');
+  }, [signOutReason]);
 
   // Redirect once auth context resolves the role
   useEffect(() => {
@@ -26,13 +37,33 @@ export default function LoginPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    setResetSent(false);
     setSubmitting(true);
 
     try {
+      setSignOutReason(null);
       await login(email, password);
     } catch {
       setError('Invalid email or password');
       setSubmitting(false);
+    }
+  };
+
+  const handleSendReset = async () => {
+    setError('');
+    setResetSent(false);
+    if (!email.trim()) {
+      setError('Enter your email above first.');
+      return;
+    }
+    setResetSending(true);
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      setResetSent(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send reset email.');
+    } finally {
+      setResetSending(false);
     }
   };
 
@@ -46,6 +77,12 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {signOutReason === 'no-profile' && (
+            <div className="auth-error">
+              Your account isn't linked to a fighter profile. If your registration was rejected,
+              you can re-register or contact an admin.
+            </div>
+          )}
           {error && <div className="auth-error">{error}</div>}
 
           <div className="auth-field">
@@ -79,6 +116,22 @@ export default function LoginPage() {
           <button type="submit" className="btn btn-primary auth-submit" disabled={submitting}>
             {submitting ? 'Signing in...' : 'Sign In'}
           </button>
+
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={handleSendReset}
+            disabled={resetSending}
+            style={{ alignSelf: 'center' }}
+          >
+            {resetSending ? 'Sending...' : 'Forgot password?'}
+          </button>
+
+          {resetSent && (
+            <div className="auth-subtitle" style={{ textAlign: 'center' }}>
+              Password reset email sent. Check your inbox and spam folder, then sign in.
+            </div>
+          )}
         </form>
       </div>
     </div>

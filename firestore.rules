@@ -56,6 +56,13 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // Auth orphans: admin-only. Holds UIDs whose fighter doc was rejected and
+    // no other fighter doc links to them, so a cleanup script can remove the
+    // dangling Firebase Auth user.
+    match /auth_orphans/{uid} {
+      allow read, write: if isAdmin();
+    }
+
     // Shows: public read (used on home page carousel), admin write
     match /shows/{showId} {
       allow read: if true;

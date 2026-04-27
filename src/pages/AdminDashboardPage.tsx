@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, writeBatch, doc, query, where, updateDoc, deleteDoc, deleteField } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc, query, where, updateDoc, deleteDoc, deleteField, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
 import { DIVISIONS, getDivisionsByGender, getDivisionById, type Division } from '@/lib/divisions';
@@ -233,10 +233,34 @@ export default function AdminDashboardPage() {
         pendingClaim: deleteField(),
         claimSnapshot: deleteField(),
       });
-      const detail = `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}${fighter.pendingClaim ? ' (claim)' : ''}`;
+
+      // When approving a claim, delete any pending fresh registrations sharing
+      // the same email — they were hidden in the UI and are now redundant.
+      const removedIds: string[] = [];
+      if (fighter.pendingClaim && fighter.email) {
+        const dupSnap = await getDocs(query(
+          collection(db, 'fighters'),
+          where('status', '==', 'pending'),
+          where('email', '==', fighter.email),
+        ));
+        for (const d of dupSnap.docs) {
+          if (d.id === fighter.id) continue;
+          if (d.data().pendingClaim === true) continue;
+          await deleteDoc(d.ref);
+          removedIds.push(d.id);
+        }
+      }
+
+      const detail = `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}`
+        + (fighter.pendingClaim ? ' (claim)' : '')
+        + (removedIds.length ? ` — auto-removed ${removedIds.length} duplicate fresh registration${removedIds.length > 1 ? 's' : ''}` : '');
       await writeLog('fighter_approved', detail, adminEmail);
-      setPendingFighters(prev => prev.filter(f => f.id !== fighter.id));
-      setMessage(`${fighter.firstName} ${fighter.lastName} approved.`);
+      setPendingFighters(prev => prev.filter(f => f.id !== fighter.id && !removedIds.includes(f.id)));
+      setMessage(
+        removedIds.length
+          ? `${fighter.firstName} ${fighter.lastName} approved. Removed ${removedIds.length} duplicate fresh registration${removedIds.length > 1 ? 's' : ''}.`
+          : `${fighter.firstName} ${fighter.lastName} approved.`
+      );
     } catch {
       setMessage('Failed to approve fighter.');
     }
@@ -271,7 +295,32 @@ export default function AdminDashboardPage() {
       } else {
         await deleteDoc(doc(db, 'fighters', fighter.id));
       }
-      const detail = `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}${isClaim ? ' (claim unlinked)' : ''}`;
+
+      // Tag the auth user as an orphan if no other fighter docs reference
+      // their UID. A cleanup script reads `auth_orphans` and deletes the
+      // matching Firebase Auth users.
+      let tagged = false;
+      if (fighter.uid) {
+        const remaining = await getDocs(query(
+          collection(db, 'fighters'),
+          where('uid', '==', fighter.uid),
+        ));
+        if (remaining.empty) {
+          await setDoc(doc(db, 'auth_orphans', fighter.uid), {
+            email: fighter.email || '',
+            reason: isClaim ? 'claim_rejected' : 'fresh_rejected',
+            originalFighterId: fighter.id,
+            originalFighterName: `${fighter.firstName} ${fighter.lastName}`,
+            rejectedBy: adminEmail,
+            rejectedAt: serverTimestamp(),
+          });
+          tagged = true;
+        }
+      }
+
+      const detail = `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}`
+        + (isClaim ? ' (claim unlinked)' : '')
+        + (tagged ? ' — auth uid tagged for cleanup' : '');
       await writeLog('fighter_rejected', detail, adminEmail);
       setPendingFighters(prev => prev.filter(f => f.id !== fighter.id));
       setMessage(isClaim
@@ -473,15 +522,32 @@ export default function AdminDashboardPage() {
       {tab === 'shows' && <ShowsManager adminEmail={adminEmail} />}
 
       {/* ---- Approvals ---- */}
-      {tab === 'approvals' && (
+      {tab === 'approvals' && (() => {
+        // Hide fresh registrations whose email matches a pending claim attempt —
+        // forces admin attention onto the claim, which is the user's actual intent.
+        const claimEmails = new Set(
+          pendingFighters
+            .filter(f => f.pendingClaim && f.email)
+            .map(f => f.email.toLowerCase())
+        );
+        const visibleFighters = pendingFighters.filter(f =>
+          f.pendingClaim || !claimEmails.has((f.email || '').toLowerCase())
+        );
+        const hiddenCount = pendingFighters.length - visibleFighters.length;
+        return (
         <div style={{ marginTop: 24 }}>
           {pendingLoading ? (
             <div className="empty-state">Loading pending registrations...</div>
-          ) : pendingFighters.length === 0 ? (
+          ) : visibleFighters.length === 0 ? (
             <div className="empty-state">No pending registrations.</div>
           ) : (
             <div className="admin-ranking-list">
-              {pendingFighters.map(fighter => {
+              {hiddenCount > 0 && (
+                <div className="admin-message" style={{ marginBottom: 12 }}>
+                  {hiddenCount} fresh registration{hiddenCount > 1 ? 's' : ''} hidden because a claim attempt exists for the same email. Reject the claim to surface them.
+                </div>
+              )}
+              {visibleFighters.map(fighter => {
                 const divNames = fighter.divisions.map(dId => {
                   const d = getDivisionById(dId);
                   return d ? `${d.name} ${d.weight}` : dId;
@@ -514,7 +580,8 @@ export default function AdminDashboardPage() {
           )}
           {message && <div className="admin-message" style={{ marginTop: 16 }}>{message}</div>}
         </div>
-      )}
+        );
+      })()}
 
       {/* ---- Log ---- */}
       {tab === 'log' && (

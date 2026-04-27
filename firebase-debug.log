@@ -1,0 +1,71 @@
+[debug] [2026-04-27T03:12:53.139Z] ----------------------------------------------------------------------
+[debug] [2026-04-27T03:12:53.140Z] Command:       /Users/alexcashmore/.nvm/versions/node/v24.14.1/bin/node /Users/alexcashmore/.nvm/versions/node/v24.14.1/bin/firebase deploy
+[debug] [2026-04-27T03:12:53.140Z] CLI Version:   15.14.0
+[debug] [2026-04-27T03:12:53.140Z] Platform:      darwin
+[debug] [2026-04-27T03:12:53.140Z] Node Version:  v24.14.1
+[debug] [2026-04-27T03:12:53.140Z] Time:          Mon Apr 27 2026 13:12:53 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2026-04-27T03:12:53.140Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-27T03:12:53.828Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-27T03:12:53.828Z] > authorizing via signed-in user (cashmore.alex@gmail.com)
+[debug] [2026-04-27T03:12:53.829Z] [iam] checking project ftra-australia for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2026-04-27T03:12:53.829Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:53.829Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:53.830Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ftra-australia:testIamPermissions [none]
+[debug] [2026-04-27T03:12:53.830Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ftra-australia:testIamPermissions  x-goog-user-project=ftra-australia
+[debug] [2026-04-27T03:12:53.830Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ftra-australia:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2026-04-27T03:12:54.965Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ftra-australia:testIamPermissions 200
+[debug] [2026-04-27T03:12:54.966Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ftra-australia:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2026-04-27T03:12:54.966Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:54.966Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:54.966Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ftra-australia [none]
+[debug] [2026-04-27T03:12:55.717Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ftra-australia 200
+[debug] [2026-04-27T03:12:55.717Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ftra-australia {"projectId":"ftra-australia","projectNumber":"221929400881","displayName":"FTRA","name":"projects/ftra-australia","resources":{"hostingSite":"ftra-australia"},"state":"ACTIVE","etag":"1_afe3ae17-f918-40d6-bced-da835bd13f81"}
+[info] 
+[info] === Deploying to 'ftra-australia'...
+[info] 
+[info] i  deploying storage, firestore, hosting 
+[info] i  storage: ensuring required API firebasestorage.googleapis.com is enabled... 
+[debug] [2026-04-27T03:12:55.719Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:55.719Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:55.719Z] >>> [apiv2][query] GET https://firebasestorage.googleapis.com/v1alpha/projects/ftra-australia/defaultBucket [none]
+[debug] [2026-04-27T03:12:56.531Z] <<< [apiv2][status] GET https://firebasestorage.googleapis.com/v1alpha/projects/ftra-australia/defaultBucket 200
+[debug] [2026-04-27T03:12:56.531Z] <<< [apiv2][body] GET https://firebasestorage.googleapis.com/v1alpha/projects/ftra-australia/defaultBucket {"name":"projects/ftra-australia/defaultBucket","location":"US-EAST1","bucket":{"name":"projects/ftra-australia/buckets/ftra-australia.firebasestorage.app"},"storageClass":"REGIONAL"}
+[info] i  firebase.storage: checking storage.rules for compilation errors... 
+[debug] [2026-04-27T03:12:56.533Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:56.533Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:56.533Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test [none]
+[debug] [2026-04-27T03:12:56.533Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test [omitted]
+[debug] [2026-04-27T03:12:58.081Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test 200
+[debug] [2026-04-27T03:12:58.081Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test {}
+[info] ✔  firebase.storage: rules file storage.rules compiled successfully 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-04-27T03:12:58.082Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:58.082Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:58.082Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/ftra-australia/databases/(default) [none]
+[debug] [2026-04-27T03:12:59.352Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/ftra-australia/databases/(default) 200
+[debug] [2026-04-27T03:12:59.352Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/ftra-australia/databases/(default) {"name":"projects/ftra-australia/databases/(default)","uid":"5c0d6e60-4788-4480-a489-b1a3aabb813b","createTime":"2026-04-11T05:31:48.935392Z","updateTime":"2026-04-11T05:31:48.935392Z","locationId":"nam5","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-04-27T02:12:59.298608Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"s","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IOGgl++HjZQDMJL+v+iL5ZMD"}
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2026-04-27T03:12:59.354Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:59.354Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:12:59.354Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test [none]
+[debug] [2026-04-27T03:12:59.354Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test [omitted]
+[debug] [2026-04-27T03:13:00.958Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test 200
+[debug] [2026-04-27T03:13:00.958Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/ftra-australia:test {}
+[info] ✔  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2026-04-27T03:13:00.959Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:13:00.959Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:13:00.959Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/ftra-australia/versions [none]
+[debug] [2026-04-27T03:13:00.959Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/ftra-australia/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-04-27T03:13:02.869Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/ftra-australia/versions 200
+[debug] [2026-04-27T03:13:02.869Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/ftra-australia/versions {"name":"projects/221929400881/sites/ftra-australia/versions/2bbe270d57846020","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-04-27T03:13:02.870Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:13:02.870Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:13:02.870Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/ftra-australia/releases pageSize=10&pageToken=
+[debug] [2026-04-27T03:13:04.283Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/ftra-australia/releases 200
+[debug] [2026-04-27T03:13:04.283Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/ftra-australia/releases {"releases":[{"name":"projects/ftra-australia/releases/cloud.firestore","rulesetName":"projects/ftra-australia/rulesets/8575e075-04de-4183-a03c-2640ddfd2e6e","createTime":"2026-04-11T05:31:54.056004Z","updateTime":"2026-04-27T02:57:11.181158Z"},{"name":"projects/ftra-australia/releases/firebase.storage/ftra-australia.firebasestorage.app","rulesetName":"projects/ftra-australia/rulesets/c718f7bb-befb-4683-b0c2-0d23fd34d863","createTime":"2026-04-11T05:35:00.759281Z","updateTime":"2026-04-27T02:57:09.712473Z"}]}
+[debug] [2026-04-27T03:13:04.297Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:13:04.297Z] Checked if tokens are valid: true, expires at: 1777262208738
+[debug] [2026-04-27T03:13:04.297Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/ftra-australia/rulesets/c718f7bb-befb-4683-b0c2-0d23fd34d863 [none]
