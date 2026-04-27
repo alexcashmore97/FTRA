@@ -3,7 +3,8 @@ import { getActiveShows } from '@/lib/shows';
 import type { Show } from '@/lib/types';
 import '@/styles/shows.css';
 
-const ROTATE_MS = 6000;
+const ROTATE_MS = 7000;
+const VISIBLE_DEPTH = 3;
 
 export default function ShowsCarousel() {
   const [shows, setShows] = useState<Show[]>([]);
@@ -27,6 +28,9 @@ export default function ShowsCarousel() {
 
   if (!loaded || shows.length === 0) return null;
 
+  const total = shows.length;
+  const active = shows[index];
+
   function formatDate(iso: string | null): string | null {
     if (!iso) return null;
     const d = new Date(iso + 'T00:00:00');
@@ -49,70 +53,114 @@ export default function ShowsCarousel() {
       event_date: show.eventDate ?? '',
       ticket_url: show.ticketURL,
     };
-    // Generic event — covers all shows in one report
     window.gtag?.('event', 'show_ticket_click', params);
-    // Per-show event — easy to filter/pin in GA without setting up custom dimensions
     const slug = slugifyTitle(show.title) || show.id.toLowerCase().slice(0, 22);
     if (slug) {
       window.gtag?.('event', `show_ticket_click_${slug}`, params);
     }
   }
 
+  // Signed offset of card i from the active card, wrapped to the shorter
+  // direction so the stack is balanced left/right when there are many shows.
+  function getRel(i: number): number {
+    if (total === 1) return 0;
+    let rel = i - index;
+    const half = total / 2;
+    if (rel > half) rel -= total;
+    if (rel <= -half) rel += total;
+    return rel;
+  }
+
+  const dateLabel = formatDate(active.eventDate);
+
   return (
     <section className="shows-carousel" aria-label="Upcoming shows">
-      {shows.map((show, i) => (
-        <div
-          key={show.id}
-          className={`shows-slide ${i === index ? 'active' : ''}`}
-          aria-hidden={i !== index}
-        >
-          <img src={show.imageURL} alt={show.title || 'Upcoming show'} className="shows-slide-image" />
-          <div className="shows-slide-overlay" />
-          <div className="shows-slide-content">
-            <div className="shows-eyebrow">Upcoming Show</div>
-            {show.title && <h2 className="shows-title">{show.title}</h2>}
-            {formatDate(show.eventDate) && (
-              <div className="shows-date">{formatDate(show.eventDate)}</div>
-            )}
-            {show.ticketURL && (
-              <a
-                href={show.ticketURL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary shows-cta"
-                onClick={() => trackTicketClick(show)}
-                onAuxClick={() => trackTicketClick(show)}
-              >
-                Buy Tickets
-              </a>
-            )}
-          </div>
-        </div>
-      ))}
+      <div className="shows-ambient" aria-hidden="true" />
 
-      {shows.length > 1 && (
+      <div className="shows-stage" role="presentation">
+        {shows.map((show, i) => {
+          const rel = getRel(i);
+          const abs = Math.abs(rel);
+          const visible = abs <= VISIBLE_DEPTH;
+          const isActive = rel === 0;
+
+          return (
+            <button
+              key={show.id}
+              type="button"
+              className={`shows-card ${isActive ? 'is-active' : ''}`}
+              aria-hidden={!isActive}
+              aria-label={isActive ? undefined : `Bring ${show.title || 'show'} to front`}
+              tabIndex={isActive ? -1 : 0}
+              style={{
+                ['--rel' as never]: rel,
+                ['--abs' as never]: abs,
+                visibility: visible ? 'visible' : 'hidden',
+                pointerEvents: visible && !isActive ? 'auto' : isActive ? 'none' : 'none',
+              }}
+              onClick={() => !isActive && setIndex(i)}
+            >
+              <div className="shows-card-frame">
+                <img
+                  src={show.imageURL}
+                  alt={show.title || 'Upcoming show'}
+                  loading="lazy"
+                  className="shows-card-image"
+                />
+                <div className="shows-card-glare" />
+                <div className="shows-card-veil" />
+              </div>
+              <div className="shows-card-floor" aria-hidden="true">
+                <img src={show.imageURL} alt="" />
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="shows-marquee">
+        {active.title && <h2 className="shows-title">{active.title}</h2>}
+        {dateLabel && <div className="shows-date">{dateLabel}</div>}
+        {active.ticketURL && (
+          <a
+            href={active.ticketURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary shows-cta"
+            onClick={() => trackTicketClick(active)}
+            onAuxClick={() => trackTicketClick(active)}
+          >
+            Buy Tickets
+          </a>
+        )}
+      </div>
+
+      {total > 1 && (
         <>
           <button
             className="shows-nav shows-nav-prev"
             aria-label="Previous show"
-            onClick={() => setIndex(i => (i - 1 + shows.length) % shows.length)}
+            onClick={() => setIndex(i => (i - 1 + total) % total)}
           >
-            ‹
+            <span aria-hidden="true">‹</span>
           </button>
           <button
             className="shows-nav shows-nav-next"
             aria-label="Next show"
-            onClick={() => setIndex(i => (i + 1) % shows.length)}
+            onClick={() => setIndex(i => (i + 1) % total)}
           >
-            ›
+            <span aria-hidden="true">›</span>
           </button>
-          <div className="shows-dots" role="tablist">
+
+
+          <div className="shows-dots" role="tablist" aria-label="Select show">
             {shows.map((_, i) => (
               <button
                 key={i}
                 className={`shows-dot ${i === index ? 'active' : ''}`}
-                aria-label={`Show slide ${i + 1}`}
+                aria-label={`Show ${i + 1}`}
                 aria-selected={i === index}
+                role="tab"
                 onClick={() => setIndex(i)}
               />
             ))}
