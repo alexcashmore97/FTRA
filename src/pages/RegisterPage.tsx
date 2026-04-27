@@ -1,10 +1,11 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, type UserCredential } from 'firebase/auth';
+import { collection, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { getFighterById } from '@/lib/fighters';
 import { getDivisionsByGender } from '@/lib/divisions';
+import { useAuth } from '@/lib/auth';
 import type { Fighter } from '@/lib/types';
 import '@/styles/auth.css';
 
@@ -14,11 +15,15 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const claimId = searchParams.get('claim');
+  const { role, fighterId, fighterStatus, loading: authLoading } = useAuth();
+  const blockedClaim = !!claimId && role === 'fighter' && !!fighterId && fighterStatus === 'approved';
 
   const [claimFighter, setClaimFighter] = useState<Fighter | null>(null);
   const [claimLoading, setClaimLoading] = useState(!!claimId);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showResetOption, setShowResetOption] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   // Account
   const [email, setEmail] = useState('');
@@ -46,6 +51,11 @@ export default function RegisterPage() {
   // Load claim fighter data
   useEffect(() => {
     if (!claimId) return;
+    if (authLoading) return;
+    if (blockedClaim) {
+      setClaimLoading(false);
+      return;
+    }
     getFighterById(claimId)
       .then(fighter => {
         if (!fighter || fighter.uid) {
@@ -75,11 +85,13 @@ export default function RegisterPage() {
         setError('Failed to load fighter profile.');
         setClaimLoading(false);
       });
-  }, [claimId]);
+  }, [claimId, authLoading, blockedClaim]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setShowResetOption(false);
+    setResetSent(false);
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
@@ -104,10 +116,59 @@ export default function RegisterPage() {
     setSubmitting(true);
 
     try {
-      // Create Firebase Auth account
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      let cred: UserCredential;
+      try {
+        cred = await createUserWithEmailAndPassword(auth, email, password);
+      } catch (err: unknown) {
+        const code = (err as { code?: string })?.code ?? '';
+        if (code !== 'auth/email-already-in-use') throw err;
+
+        // Email already has an Auth account (e.g. orphaned by an earlier
+        // rejection). Try to sign in with the supplied password and reuse it.
+        try {
+          cred = await signInWithEmailAndPassword(auth, email, password);
+        } catch (signInErr: unknown) {
+          const signInCode = (signInErr as { code?: string })?.code ?? '';
+          if (
+            signInCode === 'auth/wrong-password' ||
+            signInCode === 'auth/invalid-credential' ||
+            signInCode === 'auth/invalid-login-credentials'
+          ) {
+            setError('An account already exists for this email. Enter the password you used previously, or reset it below.');
+            setShowResetOption(true);
+          } else {
+            setError(signInErr instanceof Error ? signInErr.message : 'Sign-in failed.');
+          }
+          return;
+        }
+
+        // Signed into an existing Auth account. Refuse only if an *approved*
+        // fighter doc is already linked to this UID. Pending docs are allowed
+        // to proceed (e.g. a still-unapproved registrant claiming an existing
+        // profile instead).
+        const linked = await getDocs(
+          query(collection(db, 'fighters'), where('uid', '==', cred.user.uid))
+        );
+        const approved = linked.docs.find(d => d.data().status === 'approved');
+        if (approved) {
+          setError('An approved fighter profile is already linked to this email. Try signing in instead.');
+          return;
+        }
+      }
+
       if (claimFighter && claimId) {
-        // Claim flow: update existing fighter doc, linking the new UID
+        // Claim flow: snapshot the current personal fields so we can restore
+        // them if the claim is rejected, then link the UID and mark pending
+        // so an admin reviews before the change goes live.
+        const claimSnapshot = {
+          nickname: claimFighter.nickname,
+          instagram: claimFighter.instagram,
+          nationality: claimFighter.nationality,
+          stance: claimFighter.stance,
+          record: claimFighter.record,
+          age: claimFighter.age,
+          bio: claimFighter.bio,
+        };
         await updateDoc(doc(db, 'fighters', claimId), {
           uid: cred.user.uid,
           email,
@@ -118,6 +179,9 @@ export default function RegisterPage() {
           record: record.trim(),
           age: age ? parseInt(age, 10) : null,
           bio: bio.trim(),
+          status: 'pending',
+          pendingClaim: true,
+          claimSnapshot,
         });
         navigate(`/fighter-portal/${claimId}`);
       } else {
@@ -144,26 +208,57 @@ export default function RegisterPage() {
           email,
           uid: cred.user.uid,
           status: 'pending',
-          note:note?note.trim():''
+          note: note ? note.trim() : '',
         });
         navigate(`/fighter-portal/${cred.user.uid}`);
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Registration failed.';
-      if (message.includes('email-already-in-use')) {
-        setError('An account with this email already exists.');
-      } else {
-        setError(message);
-      }
+      setError(message);
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (claimLoading) {
+  async function handleSendReset() {
+    if (!email.trim()) {
+      setError('Enter your email above first.');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      setResetSent(true);
+      setError(null);
+      setShowResetOption(false);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send reset email.');
+    }
+  }
+
+  if (claimLoading || (claimId && authLoading)) {
     return (
       <div className="page-wrapper section container" style={{ maxWidth: 640 }}>
         <div className="empty-state">Loading fighter profile...</div>
+      </div>
+    );
+  }
+
+  if (blockedClaim) {
+    return (
+      <div className="page-wrapper section container" style={{ maxWidth: 640 }}>
+        <div className="section-header" style={{ textAlign: 'center' }}>
+          <div className="auth-badge fighter-badge">Claim Profile</div>
+          <h2>Already signed in</h2>
+          <p className="auth-subtitle">
+            You're signed in to a fighter account, so you can't claim another profile.
+            If this claim is for someone else, sign out first and have them complete it themselves.
+          </p>
+        </div>
+        <div className="auth-form" style={{ alignItems: 'center' }}>
+          <Link to={`/fighter-portal/${fighterId}`} className="btn btn-primary auth-submit">
+            Go to my profile
+          </Link>
+        </div>
       </div>
     );
   }
@@ -330,6 +425,16 @@ export default function RegisterPage() {
         </div>
 
         {error && <div className="auth-error">{error}</div>}
+        {showResetOption && (
+          <button type="button" className="btn btn-ghost" onClick={handleSendReset} style={{ alignSelf: 'center' }}>
+            Send password reset email
+          </button>
+        )}
+        {resetSent && (
+          <div className="auth-subtitle" style={{ textAlign: 'center' }}>
+            Password reset email sent. Check your inbox, then submit again.
+          </div>
+        )}
 
         <button type="submit" className="btn btn-primary auth-submit" disabled={submitting}>
           {submitting ? (isClaim ? 'Claiming...' : 'Registering...') : (isClaim ? 'Claim Profile' : 'Register')}

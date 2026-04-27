@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, writeBatch, doc, query, where, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc, query, where, updateDoc, deleteDoc, deleteField } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
 import { DIVISIONS, getDivisionsByGender, getDivisionById, type Division } from '@/lib/divisions';
@@ -228,8 +228,13 @@ export default function AdminDashboardPage() {
 
   async function approveFighter(fighter: Fighter) {
     try {
-      await updateDoc(doc(db, 'fighters', fighter.id), { status: 'approved' });
-      await writeLog('fighter_approved', `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}`, adminEmail);
+      await updateDoc(doc(db, 'fighters', fighter.id), {
+        status: 'approved',
+        pendingClaim: deleteField(),
+        claimSnapshot: deleteField(),
+      });
+      const detail = `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}${fighter.pendingClaim ? ' (claim)' : ''}`;
+      await writeLog('fighter_approved', detail, adminEmail);
       setPendingFighters(prev => prev.filter(f => f.id !== fighter.id));
       setMessage(`${fighter.firstName} ${fighter.lastName} approved.`);
     } catch {
@@ -238,12 +243,40 @@ export default function AdminDashboardPage() {
   }
 
   async function rejectFighter(fighter: Fighter) {
-    if (!confirm(`Reject and delete ${fighter.firstName} ${fighter.lastName}? This cannot be undone.`)) return;
+    const isClaim = !!fighter.pendingClaim;
+    const prompt = isClaim
+      ? `Reject claim attempt on ${fighter.firstName} ${fighter.lastName}? The profile will be unlinked and restored.`
+      : `Reject and delete ${fighter.firstName} ${fighter.lastName}? This cannot be undone.`;
+    if (!confirm(prompt)) return;
     try {
-      await deleteDoc(doc(db, 'fighters', fighter.id));
-      await writeLog('fighter_rejected', `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}`, adminEmail);
+      if (isClaim) {
+        const snap = fighter.claimSnapshot ?? {
+          nickname: '', instagram: '', nationality: '', stance: '',
+          record: '', age: null, bio: '',
+        };
+        await updateDoc(doc(db, 'fighters', fighter.id), {
+          uid: null,
+          email: '',
+          status: 'approved',
+          pendingClaim: deleteField(),
+          claimSnapshot: deleteField(),
+          nickname: snap.nickname,
+          instagram: snap.instagram,
+          nationality: snap.nationality,
+          stance: snap.stance,
+          record: snap.record,
+          age: snap.age,
+          bio: snap.bio,
+        });
+      } else {
+        await deleteDoc(doc(db, 'fighters', fighter.id));
+      }
+      const detail = `${fighter.firstName} ${fighter.lastName} — ${fighter.gym}, ${fighter.state}${isClaim ? ' (claim unlinked)' : ''}`;
+      await writeLog('fighter_rejected', detail, adminEmail);
       setPendingFighters(prev => prev.filter(f => f.id !== fighter.id));
-      setMessage(`${fighter.firstName} ${fighter.lastName} rejected and removed.`);
+      setMessage(isClaim
+        ? `Claim on ${fighter.firstName} ${fighter.lastName} rejected. Profile is claimable again.`
+        : `${fighter.firstName} ${fighter.lastName} rejected and removed.`);
     } catch {
       setMessage('Failed to reject fighter.');
     }
@@ -456,7 +489,10 @@ export default function AdminDashboardPage() {
                 return (
                   <div key={fighter.id} className="admin-ranking-row">
                     <div className="admin-fighter-info" style={{ gridColumn: '1 / 3' }}>
-                      <span className="admin-fighter-name">{fighter.firstName} {fighter.lastName}</span>
+                      <span className="admin-fighter-name">
+                        {fighter.firstName} {fighter.lastName}
+                        {fighter.pendingClaim && <span className="admin-claim-badge">Claim attempt</span>}
+                      </span>
                       {fighter.email && <span className="admin-fighter-email">{fighter.email}</span>}
                       <span className="admin-fighter-meta">
                         {fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}

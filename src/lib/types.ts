@@ -4,6 +4,16 @@ export interface DivisionRanking {
   titleDate: string | null;
 }
 
+export interface ClaimSnapshot {
+  nickname: string;
+  instagram: string;
+  nationality: string;
+  stance: string;
+  record: string;
+  age: number | null;
+  bio: string;
+}
+
 export interface Fighter {
   note?: string|undefined;
   id: string;
@@ -26,6 +36,8 @@ export interface Fighter {
   email: string;
   uid: string | null;
   status: 'pending' | 'approved';
+  pendingClaim?: boolean;
+  claimSnapshot?: ClaimSnapshot;
 }
 
 export interface AdminUser {

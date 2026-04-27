@@ -9,7 +9,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Fighter, DivisionRanking } from './types';
+import type { Fighter, DivisionRanking, ClaimSnapshot } from './types';
 
 const FIGHTERS_COLLECTION = 'fighters';
 
@@ -67,7 +67,23 @@ function docToFighter(id: string, data: Record<string, unknown>): Fighter {
     email: (data.email as string) ?? '',
     uid: (data.uid as string) ?? null,
     status: (data.status as 'pending' | 'approved') ?? 'approved',
-    note: (data.note as string) ?? ''
+    note: (data.note as string) ?? '',
+    pendingClaim: data.pendingClaim === true,
+    claimSnapshot: parseClaimSnapshot(data.claimSnapshot),
+  };
+}
+
+function parseClaimSnapshot(raw: unknown): ClaimSnapshot | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const r = raw as Record<string, unknown>;
+  return {
+    nickname: (r.nickname as string) ?? '',
+    instagram: (r.instagram as string) ?? '',
+    nationality: (r.nationality as string) ?? '',
+    stance: (r.stance as string) ?? '',
+    record: (r.record as string) ?? '',
+    age: (r.age as number) ?? null,
+    bio: (r.bio as string) ?? '',
   };
 }
 
