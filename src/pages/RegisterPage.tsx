@@ -15,7 +15,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const claimId = searchParams.get('claim');
-  const { role, fighterId, fighterStatus, loading: authLoading } = useAuth();
+  const { role, fighterId, fighterStatus, loading: authLoading, refreshRole } = useAuth();
   const blockedClaim = !!claimId && role === 'fighter' && !!fighterId && fighterStatus === 'approved';
 
   const [claimFighter, setClaimFighter] = useState<Fighter | null>(null);
@@ -184,6 +184,7 @@ export default function RegisterPage() {
           pendingClaim: true,
           claimSnapshot,
         });
+        await refreshRole();
         navigate(`/fighter-portal/${claimId}`, { replace: true });
       } else {
         // Normal registration: create new fighter doc
@@ -211,6 +212,7 @@ export default function RegisterPage() {
           status: 'pending',
           note: note ? note.trim() : '',
         });
+        await refreshRole();
         navigate(`/fighter-portal/${cred.user.uid}`, { replace: true });
       }
     } catch (err: unknown) {
