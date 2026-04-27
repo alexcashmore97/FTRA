@@ -88,7 +88,7 @@ export default function Header() {
                 )}
                 {role === 'fighter' && fighterId && (
                   <Link to={`/fighter-portal/${fighterId}`} className="nav-link">
-                    <span className="auth-user-role fighter">My Profile</span>
+                    <span className="auth-user-role fighter">Profile</span>
                   </Link>
                 )}
                 <button className="auth-logout-btn" onClick={logout}>Logout</button>
@@ -173,7 +173,7 @@ export default function Header() {
             <Link to="/admin" className="nav-mobile-link" onClick={closeMobile}>Dashboard</Link>
           )}
           {user && role === 'fighter' && fighterId && (
-            <Link to={`/fighter-portal/${fighterId}`} className="nav-mobile-link" onClick={closeMobile}>My Profile</Link>
+            <Link to={`/fighter-portal/${fighterId}`} className="nav-mobile-link" onClick={closeMobile}>Profile</Link>
           )}
           {user && (
             <button className="nav-mobile-link" onClick={() => { logout(); closeMobile(); }}>Logout</button>
