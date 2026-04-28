@@ -168,44 +168,67 @@
   outline-offset: -1px;
 }
 
-/* ---------- Pane: floor-to-ceiling angled glass.
-     Carries the SHOW IMAGE as the backdrop (or a smoky fallback).
-     No shadow, no 3D — just the angled silhouette. ---------- */
-.mm-pane {
-  position: absolute;
-  inset: 0;
-  transform: skewX(calc(-1 * var(--mm-shear)));
-  transform-origin: 50% 50%;
-  overflow: hidden;
-  pointer-events: none;
-  background: #06080d;
-}
-
+/* ---------- Pane backdrop: image sits BEHIND the skewed pane.
+     Image itself is upright (no transform); a clip-path parallelogram
+     crops it so it stays inside the angled silhouette and never bleeds
+     toward the neighbouring panel. ---------- */
 .mm-pane-bg {
   position: absolute;
-  inset: -8%;            /* slight bleed so skewed corners stay covered */
+  /* tan(12deg) ≈ 0.2126 — applied at half-height for centre-origin skew. */
+  --mm-shear-x: calc(0.2126 * var(--mm-banner-h) / 2);
+  /* Extend the box past the card horizontally so the image actually
+     reaches the parallelogram corners that lie OUTSIDE the card bounds
+     (TR and BL). Without this, those corners hit a vertical "wall" at
+     the card edge instead of cropping along the angled shear line. */
+  inset: 0 calc(-1 * var(--mm-shear-x));
   pointer-events: none;
+  overflow: hidden;
+  /* Polygon expressed in the WIDER element's coordinate space — equal
+     to the pane silhouette (shifted by +shear-x because the box origin
+     moved). Slant runs unbroken from top to bottom on both sides. */
+  clip-path: polygon(
+    calc(2 * var(--mm-shear-x)) 0,
+    100% 0,
+    calc(100% - 2 * var(--mm-shear-x)) 100%,
+    0 100%
+  );
 }
 .mm-pane-bg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Pull focus toward the fighter (usually mid-upper of a poster)
+     instead of centring on the show branding. */
+  object-position: center 38%;
   display: block;
-  /* Counter-skew the image so the poster reads upright inside the
-     angled pane silhouette. The pane edges stay slanted; the photo doesn't. */
-  transform: skewX(var(--mm-shear));
-  transform-origin: 50% 50%;
-  filter: brightness(0.55) saturate(0.85);
+  filter: brightness(0.55) saturate(0.9);
   transition: filter 600ms ease, opacity 600ms ease;
-  opacity: 0.7;
+  opacity: 0.55;
+  /* Vertical fade so the poster appears as an atmospheric backdrop
+     centred on the tile, rather than the full ad poster (header text,
+     date strip, livestream URL) reading floor-to-ceiling. */
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+          mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
 }
 .mm-card.is-active .mm-pane-bg img {
   filter: brightness(0.85) saturate(1);
-  opacity: 1;
+  opacity: 0.95;
 }
 .mm-card:hover:not(.is-active) .mm-pane-bg img {
-  filter: brightness(0.7) saturate(0.95);
-  opacity: 0.85;
+  filter: brightness(0.65) saturate(0.95);
+  opacity: 0.7;
 }
 
 .mm-pane-bg-haze {
@@ -216,8 +239,19 @@
     radial-gradient(100% 80% at 80% 90%, rgba(120, 40, 60, 0.45), transparent 65%),
     radial-gradient(60% 60% at 50% 50%, rgba(20, 30, 50, 0.4), transparent 75%),
     linear-gradient(180deg, #1a1d28 0%, #0a0c12 60%, #050609 100%);
-  transform: skewX(var(--mm-shear));
+}
+
+/* ---------- Pane: skewed overlay sitting ON TOP of the image.
+     Transparent — only the edge separators read. The pane's skewed
+     bounds also visually frame the image even though the image
+     itself stays upright underneath. ---------- */
+.mm-pane {
+  position: absolute;
+  inset: 0;
+  transform: skewX(calc(-1 * var(--mm-shear)));
   transform-origin: 50% 50%;
+  pointer-events: none;
+  background: transparent;
 }
 .mm-pane-bg-haze::before,
 .mm-pane-bg-haze::after {

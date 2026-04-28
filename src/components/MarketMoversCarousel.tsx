@@ -51,14 +51,19 @@ export default function MarketMoversCarousel() {
         <div className="mm-haze-blob mm-haze-blob-c" />
       </div>
 
-      {/* <div className="mm-eyebrow">
+     <div style={{position:'relative'}} >
+      <div style={{position:'absolute',top:'20px'}}>
+ <div className="mm-eyebrow">
         <span className="mm-eyebrow-dot" /> Market Movers
-      </div> */}
-      {/* <h2 className="mm-headline">
+      </div> 
+      <h2 className="mm-headline">
         On The Rise
-      </h2> */}
+      </h2>
+      </div>
+      </div>
 
       <div className="mm-stage" aria-label="Recently ranked-up fighters">
+        
         {movers.map((m, i) => {
           const isActive = i === index;
           const showBg = m.showImageURL;
@@ -71,15 +76,18 @@ export default function MarketMoversCarousel() {
               className={`mm-card ${isActive ? 'is-active' : ''}`}
               aria-label={`${m.fighterName} — view profile`}
             >
+              <div className="mm-pane-bg" aria-hidden="true">
+                {showBg ? (<>
+                   <img src={showBg} alt="" loading="lazy" />
+                                <div className="mm-pane-bg-veil" /></>
+               
+                ) : (
+                  <div/>
+                )}
+
+              </div>
+
               <div className="mm-pane" aria-hidden="true">
-                <div className="mm-pane-bg">
-                  {showBg ? (
-                    <img src={showBg} alt="" loading="lazy" />
-                  ) : (
-                    <div className="mm-pane-bg-haze" />
-                  )}
-                  <div className="mm-pane-bg-veil" />
-                </div>
                 <div className="mm-pane-edge mm-pane-edge-l" />
                 <div className="mm-pane-edge mm-pane-edge-r" />
               </div>
