@@ -15,7 +15,7 @@
 
 .posts-header {
   max-width: 1200px;
-  margin: 0 auto clamp(20px, 3vw, 32px);
+  marginBottom: 60px;
 }
 
 .posts-eyebrow {
