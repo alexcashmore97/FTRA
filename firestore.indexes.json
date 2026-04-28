@@ -16,6 +16,14 @@
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "p4pRank", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "fighters",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "marketMover", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

@@ -70,6 +70,8 @@ function docToFighter(id: string, data: Record<string, unknown>): Fighter {
     note: (data.note as string) ?? '',
     pendingClaim: data.pendingClaim === true,
     claimSnapshot: parseClaimSnapshot(data.claimSnapshot),
+    marketMover: data.marketMover === true,
+    shows: Array.isArray(data.shows) ? (data.shows as string[]) : [],
   };
 }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import DivisionCard from '@/components/DivisionCard';
 import ShowsCarousel from '@/components/ShowsCarousel';
+import MarketMoversCarousel from '@/components/MarketMoversCarousel';
 import { getDivisionsByGender } from '@/lib/divisions';
 import { getFighterCount } from '@/lib/fighters';
 import SEO from '@/components/SEO';
@@ -47,6 +48,9 @@ export default function HomePage() {
 
       {/* Upcoming shows carousel — renders nothing if no active shows */}
       <ShowsCarousel />
+
+      {/* Market Movers — recently ranked-up fighters */}
+      <MarketMoversCarousel />
 
       {/* Stats */}
       <section className="hero-stats">

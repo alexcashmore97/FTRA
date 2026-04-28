@@ -38,6 +38,8 @@ export interface Fighter {
   status: 'pending' | 'approved';
   pendingClaim?: boolean;
   claimSnapshot?: ClaimSnapshot;
+  marketMover?: boolean;
+  shows?: string[];
 }
 
 export interface AdminUser {

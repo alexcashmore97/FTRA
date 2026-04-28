@@ -83,6 +83,7 @@ export default function AdminDashboardPage() {
   const [originalFighters, setOriginalFighters] = useState<Fighter[]>([]);
   const [pendingFighters, setPendingFighters] = useState<Fighter[]>([]);
   const [pendingLoading, setPendingLoading] = useState(false);
+  const [allShows, setAllShows] = useState<Show[]>([]);
   const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
   const [logLoading, setLogLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -98,6 +99,11 @@ export default function AdminDashboardPage() {
     if (tab === 'approvals') loadPending();
     if (tab === 'log') loadLog();
   }, [tab]);
+
+  // Load shows once for the shows-link dropdown in division/p4p rows
+  useEffect(() => {
+    getAllShows().then(setAllShows).catch(() => setAllShows([]));
+  }, []);
 
   // ---- Shows ----
   // (rendered via <ShowsManager /> below — keeps this file's state surface focused on rankings)
@@ -190,7 +196,9 @@ export default function AdminDashboardPage() {
           email: (data.email as string) ?? '',
           uid: (data.uid as string) ?? null,
           status: (data.status as 'pending' | 'approved') ?? 'approved',
-          note:(data.note)??''
+          note:(data.note)??'',
+          marketMover: data.marketMover === true,
+          shows: Array.isArray(data.shows) ? (data.shows as string[]) : [],
         };
       });
 
@@ -427,6 +435,44 @@ export default function AdminDashboardPage() {
     ));
   }
 
+  // ---- Show linkage setters (committed via Save Rankings) ----
+
+  function addFighterShow(fighterId: string, showId: string) {
+    if (!showId) return;
+    setFighters(prev => prev.map(f => {
+      if (f.id !== fighterId) return f;
+      const current = f.shows ?? [];
+      if (current.includes(showId)) return f;
+      return { ...f, shows: [...current, showId] };
+    }));
+  }
+
+  function removeFighterShow(fighterId: string, showId: string) {
+    setFighters(prev => prev.map(f => {
+      if (f.id !== fighterId) return f;
+      return { ...f, shows: (f.shows ?? []).filter(s => s !== showId) };
+    }));
+  }
+
+  // ---- Market Mover star toggle (independent of batched rank save) ----
+
+  async function toggleMarketMover(fighterId: string) {
+    const target = fighters.find(f => f.id === fighterId);
+    if (!target) return;
+    const next = !target.marketMover;
+    // Optimistic update of local state (both working copy and original)
+    setFighters(prev => prev.map(f => f.id === fighterId ? { ...f, marketMover: next } : f));
+    setOriginalFighters(prev => prev.map(f => f.id === fighterId ? { ...f, marketMover: next } : f));
+    try {
+      await updateDoc(doc(db, 'fighters', fighterId), { marketMover: next });
+    } catch {
+      // Revert on failure
+      setFighters(prev => prev.map(f => f.id === fighterId ? { ...f, marketMover: !next } : f));
+      setOriginalFighters(prev => prev.map(f => f.id === fighterId ? { ...f, marketMover: !next } : f));
+      setMessage('Failed to update market mover flag.');
+    }
+  }
+
   // ---- Save with log ----
 
   async function saveChanges() {
@@ -441,9 +487,16 @@ export default function AdminDashboardPage() {
         const orig = originalFighters.find(o => o.id === f.id);
         const name = `${f.firstName} ${f.lastName}`;
 
+        const newShows = f.shows ?? [];
+        const oldShows = orig?.shows ?? [];
+        const showsChanged = newShows.length !== oldShows.length
+          || newShows.some(s => !oldShows.includes(s));
+
         if (tab === 'division') {
-          // Write the full rankings map for this fighter
-          batch.update(ref, { rankings: f.rankings });
+          // Write the full rankings map for this fighter (and shows if changed)
+          batch.update(ref, showsChanged
+            ? { rankings: f.rankings, shows: newShows }
+            : { rankings: f.rankings });
 
           const newR = divRanking(f, divId);
           const oldR = orig ? divRanking(orig, divId) : { rank: null, titleHolder: '', titleDate: null };
@@ -454,11 +507,29 @@ export default function AdminDashboardPage() {
           if (oldR.titleHolder !== newR.titleHolder) {
             logLines.push(`${name}: ${newR.titleHolder ? `set as ${newR.titleHolder}` : 'title removed'}`);
           }
+          if (showsChanged) {
+            const added = newShows.filter(s => !oldShows.includes(s)).length;
+            const removed = oldShows.filter(s => !newShows.includes(s)).length;
+            const parts: string[] = [];
+            if (added) parts.push(`+${added} show${added > 1 ? 's' : ''}`);
+            if (removed) parts.push(`-${removed} show${removed > 1 ? 's' : ''}`);
+            logLines.push(`${name}: shows ${parts.join(' / ')}`);
+          }
         } else {
-          batch.update(ref, { p4pRank: f.p4pRank });
+          batch.update(ref, showsChanged
+            ? { p4pRank: f.p4pRank, shows: newShows }
+            : { p4pRank: f.p4pRank });
 
           if (orig && orig.p4pRank !== f.p4pRank) {
             logLines.push(`${name}: P4P ${orig.p4pRank ?? 'unranked'} → ${f.p4pRank ?? 'unranked'}`);
+          }
+          if (showsChanged) {
+            const added = newShows.filter(s => !oldShows.includes(s)).length;
+            const removed = oldShows.filter(s => !newShows.includes(s)).length;
+            const parts: string[] = [];
+            if (added) parts.push(`+${added} show${added > 1 ? 's' : ''}`);
+            if (removed) parts.push(`-${removed} show${removed > 1 ? 's' : ''}`);
+            logLines.push(`${name}: shows ${parts.join(' / ')}`);
           }
         }
       }
@@ -680,33 +751,101 @@ export default function AdminDashboardPage() {
                     </Link>
                     <span className="admin-fighter-meta">{fighter.gym}{fighter.state ? `, ${fighter.state}` : ''}</span>
                   </div>
+                  <button
+                    type="button"
+                    className={`admin-star-btn ${fighter.marketMover ? 'is-starred' : ''}`}
+                    onClick={() => toggleMarketMover(fighter.id)}
+                    aria-pressed={!!fighter.marketMover}
+                    aria-label={fighter.marketMover
+                      ? `Remove ${fighter.firstName} ${fighter.lastName} from Market Movers`
+                      : `Add ${fighter.firstName} ${fighter.lastName} to Market Movers`}
+                    title={fighter.marketMover ? 'Remove from Market Movers' : 'Add to Market Movers'}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M12 2.5l2.95 6.36 6.93.74-5.18 4.74 1.45 6.85L12 17.77l-6.15 3.42 1.45-6.85L2.12 9.6l6.93-.74L12 2.5z"
+                        fill={fighter.marketMover ? 'currentColor' : 'none'}
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
                   <Link to={`/fighter-portal/${fighter.id}`} className="btn btn-ghost" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
                     Edit
                   </Link>
-                  {tab === 'division' && (
-                    <div className="admin-title-controls">
-                      <select
-                        className="input admin-title-select"
-                        value={ranking.titleHolder}
-                        onChange={e => setChampionTitle(fighter.id, e.target.value)}
-                        style={{ appearance: 'auto' }}
-                      >
-                        <option value="">No Title</option>
-                        <option value="WBC World Champion">World Champion</option>
-                        <option value="WBC Australian Champion">National Champion</option>
-                        <option value={`WBC ${fighter.state} State Champion`}>State Champion ({fighter.state})</option>
-                      </select>
-                      {ranking.titleHolder && (
-                        <input
-                          type="date"
-                          className="input admin-title-date"
-                          value={ranking.titleDate ?? ''}
-                          onChange={e => setTitleDate(fighter.id, e.target.value)}
-                          title="Date belt was received"
-                        />
-                      )}
-                    </div>
-                  )}
+                  <div className="admin-title-controls">
+                    {tab === 'division' && (
+                      <>
+                        <select
+                          className="input admin-title-select"
+                          value={ranking.titleHolder}
+                          onChange={e => setChampionTitle(fighter.id, e.target.value)}
+                          style={{ appearance: 'auto' }}
+                        >
+                          <option value="">No Title</option>
+                          <option value="WBC World Champion">World Champion</option>
+                          <option value="WBC Australian Champion">National Champion</option>
+                          <option value={`WBC ${fighter.state} State Champion`}>State Champion ({fighter.state})</option>
+                        </select>
+                        {ranking.titleHolder && (
+                          <input
+                            type="date"
+                            className="input admin-title-date"
+                            value={ranking.titleDate ?? ''}
+                            onChange={e => setTitleDate(fighter.id, e.target.value)}
+                            title="Date belt was received"
+                          />
+                        )}
+                      </>
+                    )}
+
+                    <select
+                      className="input admin-shows-select"
+                      value=""
+                      onChange={e => {
+                        addFighterShow(fighter.id, e.target.value);
+                        e.target.value = '';
+                      }}
+                      style={{ appearance: 'auto' }}
+                      title="Link a show to this fighter"
+                    >
+                      <option value="">+ Link show…</option>
+                      {allShows
+                        .filter(s => !(fighter.shows ?? []).includes(s.id))
+                        .map(s => (
+                          <option key={s.id} value={s.id}>
+                            {s.title || '(untitled)'}{s.eventDate ? ` · ${s.eventDate}` : ''}
+                          </option>
+                        ))}
+                    </select>
+
+                    {(fighter.shows ?? []).length > 0 && (
+                      <div className="admin-shows-chips">
+                        {(fighter.shows ?? []).map(showId => {
+                          const show = allShows.find(s => s.id === showId);
+                          const label = show?.title || '(missing)';
+                          return (
+                            <span
+                              key={showId}
+                              className={`admin-shows-chip${show ? '' : ' is-missing'}`}
+                              title={label}
+                            >
+                              <span className="admin-shows-chip-label">{label}</span>
+                              <button
+                                type="button"
+                                className="admin-shows-chip-x"
+                                onClick={() => removeFighterShow(fighter.id, showId)}
+                                aria-label={`Unlink ${label}`}
+                              >
+                                ×
+                              </button>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}

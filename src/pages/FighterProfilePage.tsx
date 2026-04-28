@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getFighterById } from '@/lib/fighters';
 import { getDivisionById } from '@/lib/divisions';
+import { getAllShows } from '@/lib/shows';
 import { useAuth } from '@/lib/auth';
-import type { Fighter } from '@/lib/types';
+import type { Fighter, Show } from '@/lib/types';
 import SEO from '@/components/SEO';
 
 function titleTier(title: string): string {
@@ -20,6 +21,7 @@ export default function FighterProfilePage() {
   const isAdmin = role === 'admin';
 
   const [fighter, setFighter] = useState<Fighter | null>(null);
+  const [linkedShows, setLinkedShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,6 +40,30 @@ export default function FighterProfilePage() {
       .catch(() => setError('Failed to load fighter profile.'))
       .finally(() => setLoading(false));
   }, [id, isAdmin]);
+
+  useEffect(() => {
+    const ids = fighter?.shows ?? [];
+    if (ids.length === 0) {
+      setLinkedShows([]);
+      return;
+    }
+    getAllShows()
+      .then(all => {
+        const filtered = all.filter(s => ids.includes(s.id));
+        const today = new Date().toISOString().slice(0, 10);
+        // Upcoming first (soonest first), then past (most recent first)
+        filtered.sort((a, b) => {
+          const aDate = a.eventDate ?? '';
+          const bDate = b.eventDate ?? '';
+          const aUpcoming = aDate >= today;
+          const bUpcoming = bDate >= today;
+          if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
+          return aUpcoming ? aDate.localeCompare(bDate) : bDate.localeCompare(aDate);
+        });
+        setLinkedShows(filtered);
+      })
+      .catch(() => setLinkedShows([]));
+  }, [fighter?.id, fighter?.shows]);
 
   if (loading) {
     return (
@@ -186,6 +212,65 @@ export default function FighterProfilePage() {
           </div>
         )}
       </div>
+
+      {linkedShows.length > 0 && <FighterShows shows={linkedShows} />}
     </div>
+  );
+}
+
+function FighterShows({ shows }: { shows: Show[] }) {
+  const today = new Date().toISOString().slice(0, 10);
+
+  function formatDate(iso: string | null): string | null {
+    if (!iso) return null;
+    const d = new Date(iso + 'T00:00:00');
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  return (
+    <section className="fighter-shows" aria-label="Shows featuring this fighter">
+      <div className="container">
+        <div className="fighter-shows-header">
+          <div className="fighter-shows-eyebrow">Featured On</div>
+        </div>
+        <div className="fighter-shows-grid">
+          {shows.map(show => {
+            const dateLabel = formatDate(show.eventDate);
+            const isUpcoming = show.eventDate ? show.eventDate >= today : false;
+            return (
+              <div
+                key={show.id}
+                className={`fighter-show-card ${isUpcoming ? 'is-upcoming' : 'is-past'}`}
+              >
+                <div className="fighter-show-bg" aria-hidden="true">
+                  {show.imageURL && (
+                    <img src={show.imageURL} alt="" loading="lazy" />
+                  )}
+                  <div className="fighter-show-bg-veil" />
+                </div>
+                <div className="fighter-show-content">
+                  <div className="fighter-show-status">
+                    {isUpcoming ? 'Upcoming' : 'Past Event'}
+                  </div>
+                  <h3 className="fighter-show-title">{show.title || 'Untitled show'}</h3>
+                  {dateLabel && <div className="fighter-show-date">{dateLabel}</div>}
+                  {isUpcoming && show.ticketURL && (
+                    <a
+                      href={show.ticketURL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary fighter-show-cta"
+                    >
+                      Buy Tickets
+                    </a>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }

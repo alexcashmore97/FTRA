@@ -1,0 +1,535 @@
+/* ========================================
+   Market Movers Carousel (home page)
+   Floor-to-ceiling angled glass panes act
+   as separators. Each pane holds an upright
+   fighter card with its own subtle 3D depth.
+   ======================================== */
+
+.mm-carousel {
+  --mm-shear: 12deg;
+  --mm-radius: 16px;
+  --mm-banner-h: clamp(750px, 44vw, 500px);
+  --mm-card-gap: 0px;
+  --mm-tick: #2dd47a;
+  --mm-tick-soft: rgba(45, 212, 122, 0.4);
+
+  position: relative;
+  width: 100%;
+  padding: clamp(0px, 0vw, 64px) clamp(20px, 4vw, 56px) clamp(36px, 4vw, 56px);
+  overflow: hidden;
+  background:
+    radial-gradient(140% 70% at 50% 0%, rgba(45, 50, 70, 0.55) 0%, transparent 60%),
+    radial-gradient(80% 80% at 50% 100%, rgba(0, 0, 0, 0.92) 0%, transparent 70%),
+    linear-gradient(180deg, #06080d 0%, #04060a 60%, #000 100%);
+  isolation: isolate;
+}
+
+/* Top/bottom hairline accents */
+.mm-carousel::before,
+.mm-carousel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+.mm-carousel::before { top: 0; }
+.mm-carousel::after  { bottom: 0; }
+
+/* ---------- Hazy ambient backdrop (neutral, not green) ---------- */
+.mm-haze {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(60px) saturate(1.1);
+  opacity: 0.5;
+}
+.mm-haze-blob {
+  position: absolute;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  animation: mm-drift 22s ease-in-out infinite alternate;
+}
+.mm-haze-blob-a {
+  width: 50%;
+  height: 70%;
+  left: -8%;
+  top: 10%;
+  background: radial-gradient(closest-side, rgba(41, 41, 192, 0.5), transparent 70%);
+}
+.mm-haze-blob-b {
+  width: 60%;
+  height: 80%;
+  right: -10%;
+  top: -10%;
+  background: radial-gradient(closest-side, rgba(212, 168, 67, 0.18), transparent 70%);
+  animation-delay: -7s;
+}
+.mm-haze-blob-c {
+  width: 55%;
+  height: 60%;
+  left: 25%;
+  bottom: -15%;
+  background: radial-gradient(closest-side, rgba(180, 60, 90, 0.18), transparent 70%);
+  animation-delay: -14s;
+}
+@keyframes mm-drift {
+  0%   { transform: translate3d(0, 0, 0)   scale(1);   }
+  50%  { transform: translate3d(3%, -2%, 0) scale(1.08); }
+  100% { transform: translate3d(-2%, 3%, 0) scale(0.96); }
+}
+
+/* ---------- Header chrome ---------- */
+.mm-eyebrow {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 10px;
+}
+.mm-eyebrow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  animation: mm-pulse 1.8s ease-in-out infinite;
+}
+@keyframes mm-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.7); }
+}
+
+.mm-headline {
+  position: relative;
+  z-index: 3;
+  margin: 0 0 clamp(20px, 3vw, 32px);
+  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1;
+}
+.mm-headline-accent {
+  font-weight: 600;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Stage (the row of glass panes) ---------- */
+.mm-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  gap: var(--mm-card-gap);
+  width: 100%;
+  height: var(--mm-banner-h);
+}
+
+/* ---------- Card (flex item, holds one glass pane + tile) ---------- */
+.mm-card {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.mm-card:focus-visible {
+  outline: none;
+}
+.mm-card:focus-visible .mm-pane {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.025) 50%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  outline: 1px solid rgba(255, 255, 255, 0.4);
+  outline-offset: -1px;
+}
+
+/* ---------- Pane: floor-to-ceiling angled glass.
+     Carries the SHOW IMAGE as the backdrop (or a smoky fallback).
+     No shadow, no 3D — just the angled silhouette. ---------- */
+.mm-pane {
+  position: absolute;
+  inset: 0;
+  transform: skewX(calc(-1 * var(--mm-shear)));
+  transform-origin: 50% 50%;
+  overflow: hidden;
+  pointer-events: none;
+  background: #06080d;
+}
+
+.mm-pane-bg {
+  position: absolute;
+  inset: -8%;            /* slight bleed so skewed corners stay covered */
+  pointer-events: none;
+}
+.mm-pane-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Counter-skew the image so the poster reads upright inside the
+     angled pane silhouette. The pane edges stay slanted; the photo doesn't. */
+  transform: skewX(var(--mm-shear));
+  transform-origin: 50% 50%;
+  filter: brightness(0.55) saturate(0.85);
+  transition: filter 600ms ease, opacity 600ms ease;
+  opacity: 0.7;
+}
+.mm-card.is-active .mm-pane-bg img {
+  filter: brightness(0.85) saturate(1);
+  opacity: 1;
+}
+.mm-card:hover:not(.is-active) .mm-pane-bg img {
+  filter: brightness(0.7) saturate(0.95);
+  opacity: 0.85;
+}
+
+.mm-pane-bg-haze {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 70% at 30% 20%, rgba(64, 88, 130, 0.55), transparent 60%),
+    radial-gradient(100% 80% at 80% 90%, rgba(120, 40, 60, 0.45), transparent 65%),
+    radial-gradient(60% 60% at 50% 50%, rgba(20, 30, 50, 0.4), transparent 75%),
+    linear-gradient(180deg, #1a1d28 0%, #0a0c12 60%, #050609 100%);
+  transform: skewX(var(--mm-shear));
+  transform-origin: 50% 50%;
+}
+.mm-pane-bg-haze::before,
+.mm-pane-bg-haze::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.08), transparent 70%);
+  filter: blur(30px);
+  animation: mm-drift 18s ease-in-out infinite alternate;
+}
+.mm-pane-bg-haze::after {
+  background: radial-gradient(closest-side, rgba(120, 80, 180, 0.18), transparent 70%);
+  animation-delay: -9s;
+}
+
+/* Dark veil + subtle vignette to keep the upright tile readable on top */
+.mm-pane-bg-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.42) 50%, rgba(0, 0, 0, 0.7) 100%),
+    radial-gradient(120% 60% at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.45) 100%);
+  pointer-events: none;
+  transition: opacity 500ms ease;
+  opacity: 1;
+}
+.mm-card.is-active .mm-pane-bg-veil {
+  opacity: 0.78;
+}
+
+/* The angled separators — thin lines on the left/right of every pane */
+.mm-pane-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+}
+.mm-pane-edge-l { left: 0; }
+.mm-pane-edge-r { right: 0; }
+/* hide outer-most edges so the row reads as one banner */
+.mm-card:first-child .mm-pane-edge-l { opacity: 0; }
+.mm-card:last-child  .mm-pane-edge-r { opacity: 0; }
+
+/* ---------- Tile frame: upright box centered inside the angled pane.
+     No skew — the fighter card itself stays perfectly rectangular. ---------- */
+.mm-pane-inner {
+  position: absolute;
+  inset: 0;
+  padding: clamp(128px, 4vw, 44px) clamp(52px, 6.5vw, 84px);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  pointer-events: none;
+}
+.mm-pane-inner > * {
+  pointer-events: auto;
+}
+
+/* ---------- Tile: the actual fighter card. Carries the 3D depth. ---------- */
+.mm-tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--mm-radius);
+  overflow: hidden;
+  background: #0c0e14;
+  box-shadow:
+    0 18px 38px -14px rgba(0, 0, 0, 0.85),
+    0 6px 12px -4px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  filter: grayscale(0.65) brightness(0.55) saturate(0.75);
+  transform: scale(0.97);
+  transform-origin: 50% 60%;
+  transition:
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 500ms ease,
+    box-shadow 500ms ease;
+}
+.mm-card.is-active .mm-tile {
+  transform: scale(1.02) translateY(-4px);
+  filter: grayscale(0) brightness(1) saturate(1.05);
+  box-shadow:
+    0 28px 52px -14px rgba(0, 0, 0, 0.92),
+    0 8px 16px -4px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+/* ---------- Photo (top half) ---------- */
+.mm-tile-photo {
+  position: relative;
+  height: 56%;
+  overflow: hidden;
+}
+.mm-tile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.05) saturate(1.05);
+}
+.mm-tile-photo-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(120% 100% at 50% 30%, rgba(255, 255, 255, 0.07), transparent 70%),
+    linear-gradient(160deg, #2b2f3e 0%, #131520 60%, #07080d 100%);
+}
+.mm-tile-photo-fallback span {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.18);
+  user-select: none;
+}
+.mm-tile-photo-fade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 50%;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
+  pointer-events: none;
+}
+
+/* ---------- Info panel (bottom half) ---------- */
+.mm-tile-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 16px 18px;
+  color: #fff;
+}
+
+.mm-tile-name {
+  font-size: clamp(0.66rem, 0.95vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 400ms ease;
+}
+.mm-card.is-active .mm-tile-name {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.mm-tile-rank {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.mm-tile-rank-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  align-self: center;
+  margin-right: 2px;
+}
+.mm-tile-rank-value {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: clamp(1.8rem, 3.6vw, 3rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--mm-tick);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 6px var(--mm-tick-soft);
+  opacity: 0.6;
+  transition: opacity 500ms ease;
+}
+.mm-card.is-active .mm-tile-rank-value {
+  opacity: 1;
+}
+.mm-rank-hash {
+  font-size: 0.55em;
+  font-weight: 700;
+  margin-right: 2px;
+  opacity: 0.7;
+}
+.mm-tile-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: rgba(45, 212, 122, 0.1);
+  border: 1px solid rgba(45, 212, 122, 0.3);
+  color: var(--mm-tick);
+  align-self: center;
+}
+
+.mm-tile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: clamp(0.62rem, 0.85vw, 0.74rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mm-tile-gym {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mm-tile-weight {
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Footer (active name + dots) ---------- */
+.mm-footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: clamp(20px, 2.5vw, 28px);
+  color: rgba(255, 255, 255, 0.6);
+}
+.mm-footer-name {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.mm-dots {
+  display: flex;
+  gap: 8px;
+}
+.mm-dot {
+  width: 22px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: background 200ms ease, width 300ms ease;
+}
+.mm-dot:hover { background: rgba(255, 255, 255, 0.55); }
+.mm-dot.active {
+  background: #fff;
+  width: 36px;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .mm-tile,
+  .mm-haze-blob,
+  .mm-tile-bg-haze::before,
+  .mm-tile-bg-haze::after,
+  .mm-eyebrow-dot {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .mm-carousel {
+    --mm-shear: 9deg;
+    --mm-banner-h: clamp(340px, 60vw, 440px);
+  }
+  .mm-pane-inner {
+    padding: clamp(20px, 3.5vw, 32px) clamp(36px, 5vw, 56px);
+  }
+}
+@media (max-width: 640px) {
+  .mm-carousel {
+    --mm-shear: 7deg;
+    --mm-banner-h: 420px;
+    padding: 32px 16px 32px;
+  }
+  .mm-pane-inner {
+    padding: 22px 32px;
+  }
+  /* Single-focus mode: only the active card is visible. Auto-rotate
+     and the dots row drive which card is shown. */
+  .mm-card:not(.is-active) {
+    display: none;
+  }
+  .mm-card.is-active .mm-tile {
+    /* No siblings to compare against — hold the resting size */
+    transform: none;
+  }
+  .mm-pane-edge {
+    display: none;
+  }
+}
