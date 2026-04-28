@@ -1241,9 +1241,7 @@ function PostsManager({ adminEmail }: { adminEmail: string }) {
 
   return (
     <div style={{ marginTop: 24 }}>
-      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
-        Active posts appear in the Reading Room section on the home page. Toggle a post to Hidden to remove it without deleting.
-      </p>
+     
 
       {/* Existing posts */}
       {loading ? (
