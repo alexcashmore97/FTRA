@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import DivisionCard from '@/components/DivisionCard';
 import ShowsCarousel from '@/components/ShowsCarousel';
 import MarketMoversCarousel from '@/components/MarketMoversCarousel';
+import PostsCarousel from '@/components/PostsCarousel';
 import { getDivisionsByGender } from '@/lib/divisions';
 import { getFighterCount } from '@/lib/fighters';
 import SEO from '@/components/SEO';
@@ -51,6 +52,9 @@ export default function HomePage() {
 
       {/* Market Movers — recently ranked-up fighters */}
       <MarketMoversCarousel />
+
+      {/* Reading Room — text posts and embedded video posts */}
+      <PostsCarousel />
 
       {/* Stats */}
       <section className="hero-stats">

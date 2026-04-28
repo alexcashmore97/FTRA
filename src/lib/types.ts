@@ -57,3 +57,17 @@ export interface Show {
   active: boolean;
   createdAt: number;
 }
+
+export type PostType = 'text' | 'video';
+
+export interface Post {
+  id: string;
+  title: string;
+  excerpt: string;
+  coverImageURL: string;
+  type: PostType;
+  body: string;
+  youtubeId: string;
+  active: boolean;
+  createdAt: number;
+}

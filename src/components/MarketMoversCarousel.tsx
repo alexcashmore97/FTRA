@@ -52,7 +52,7 @@ export default function MarketMoversCarousel() {
       </div>
 
      <div style={{position:'relative'}} >
-      <div style={{position:'absolute',top:'20px'}}>
+      <div className='mm-container-float'>
  <div className="mm-eyebrow">
         <span className="mm-eyebrow-dot" /> Market Movers
       </div> 

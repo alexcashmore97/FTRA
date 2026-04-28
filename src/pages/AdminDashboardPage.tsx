@@ -7,12 +7,13 @@ import { DIVISIONS, getDivisionsByGender, getDivisionById, type Division } from 
 import { getPendingFighters } from '@/lib/fighters';
 import { writeLog, getLogEntries, type LogEntry } from '@/lib/adminLog';
 import { getAllShows, addShow, updateShow, deleteShow, uploadShowImage } from '@/lib/shows';
-import type { Fighter, DivisionRanking, Show } from '@/lib/types';
+import { getAllPosts, addPost, updatePost, deletePost, uploadPostImage, parseYouTubeId } from '@/lib/posts';
+import type { Fighter, DivisionRanking, Show, Post, PostType } from '@/lib/types';
 import '@/styles/auth.css';
 import '@/styles/admin.css';
 import '@/styles/shows.css';
 
-type Tab = 'approvals' | 'division' | 'p4p' | 'shows' | 'log';
+type Tab = 'approvals' | 'division' | 'p4p' | 'shows' | 'posts' | 'log';
 
 // Rank input with local state — only commits to parent on blur/Enter so that
 // mid-typing values don't trigger the auto-compaction logic.
@@ -584,6 +585,9 @@ export default function AdminDashboardPage() {
         <button className={`gender-tab ${tab === 'shows' ? 'active' : ''}`} onClick={() => setTab('shows')}>
           Shows
         </button>
+        <button className={`gender-tab ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>
+          Posts
+        </button>
         <button className={`gender-tab ${tab === 'log' ? 'active' : ''}`} onClick={() => setTab('log')}>
           Log
         </button>
@@ -591,6 +595,9 @@ export default function AdminDashboardPage() {
 
       {/* ---- Shows ---- */}
       {tab === 'shows' && <ShowsManager adminEmail={adminEmail} />}
+
+      {/* ---- Posts ---- */}
+      {tab === 'posts' && <PostsManager adminEmail={adminEmail} />}
 
       {/* ---- Approvals ---- */}
       {tab === 'approvals' && (() => {
@@ -1093,8 +1100,330 @@ function formatAction(action: string): string {
     case 'fighter_rejected': return 'Fighter Rejected';
     case 'show_added': return 'Show Added';
     case 'show_deleted': return 'Show Deleted';
+    case 'post_added': return 'Post Added';
+    case 'post_deleted': return 'Post Deleted';
     default: return action;
   }
+}
+
+// ============================================================
+// Posts Manager — text or embedded YouTube video posts
+// ============================================================
+function PostsManager({ adminEmail }: { adminEmail: string }) {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  // New-post form state
+  const [newType, setNewType] = useState<PostType>('text');
+  const [newTitle, setNewTitle] = useState('');
+  const [newExcerpt, setNewExcerpt] = useState('');
+  const [newBody, setNewBody] = useState('');
+  const [newYouTubeInput, setNewYouTubeInput] = useState('');
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [creating, setCreating] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { load(); }, []);
+
+  async function load() {
+    setLoading(true);
+    try {
+      setPosts(await getAllPosts());
+    } catch {
+      setMessage('Failed to load posts.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCreate() {
+    if (!newTitle.trim()) {
+      setMessage('Please enter a title.');
+      return;
+    }
+    let youtubeId = '';
+    if (newType === 'video') {
+      youtubeId = parseYouTubeId(newYouTubeInput);
+      if (!youtubeId) {
+        setMessage('Could not find a YouTube video ID in that input. Paste an iframe, watch URL, or video ID.');
+        return;
+      }
+    } else if (!newBody.trim()) {
+      setMessage('Please enter post body text.');
+      return;
+    }
+    setCreating(true);
+    setMessage(null);
+    try {
+      const id = await addPost({
+        title: newTitle.trim(),
+        excerpt: newExcerpt.trim(),
+        coverImageURL: '',
+        type: newType,
+        body: newBody.trim(),
+        youtubeId,
+        active: true,
+      });
+      if (newFile) {
+        const url = await uploadPostImage(id, newFile);
+        await updatePost(id, { coverImageURL: url });
+      }
+      await writeLog('post_added', `${newTitle} (${newType})`, adminEmail);
+      setNewType('text');
+      setNewTitle('');
+      setNewExcerpt('');
+      setNewBody('');
+      setNewYouTubeInput('');
+      setNewFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      setMessage('Post added.');
+      await load();
+    } catch (err) {
+      console.error('Create post error:', err);
+      setMessage('Failed to add post.');
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function handleReplaceImage(post: Post, e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusyId(post.id);
+    try {
+      const url = await uploadPostImage(post.id, file);
+      await updatePost(post.id, { coverImageURL: url });
+      setPosts(prev => prev.map(p => p.id === post.id ? { ...p, coverImageURL: url } : p));
+      setMessage('Cover image updated.');
+    } catch {
+      setMessage('Failed to upload cover image.');
+    } finally {
+      setBusyId(null);
+      e.target.value = '';
+    }
+  }
+
+  async function handleField(post: Post, patch: Partial<Post>) {
+    setPosts(prev => prev.map(p => p.id === post.id ? { ...p, ...patch } : p));
+    try {
+      await updatePost(post.id, patch);
+    } catch {
+      setMessage('Failed to save change.');
+    }
+  }
+
+  async function handleYouTubeUpdate(post: Post, raw: string) {
+    const id = parseYouTubeId(raw);
+    if (!id) {
+      setMessage('Could not parse a YouTube ID from that input.');
+      return;
+    }
+    await handleField(post, { youtubeId: id });
+    setMessage('YouTube video updated.');
+  }
+
+  async function handleDelete(post: Post) {
+    if (!confirm(`Delete "${post.title || 'untitled post'}"? This cannot be undone.`)) return;
+    setBusyId(post.id);
+    try {
+      await deletePost(post.id, post.coverImageURL);
+      await writeLog('post_deleted', `${post.title || '(untitled)'} (${post.type})`, adminEmail);
+      setPosts(prev => prev.filter(p => p.id !== post.id));
+      setMessage('Post deleted.');
+    } catch {
+      setMessage('Failed to delete post.');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
+        Active posts appear in the Reading Room section on the home page. Toggle a post to Hidden to remove it without deleting.
+      </p>
+
+      {/* Existing posts */}
+      {loading ? (
+        <div className="empty-state">Loading posts...</div>
+      ) : posts.length === 0 ? (
+        <div className="empty-state">No posts yet. Add one below.</div>
+      ) : (
+        <div className="admin-shows-list">
+          {posts.map(post => (
+            <div key={post.id} className={`admin-show-row ${post.active ? '' : 'inactive'}`}>
+              {post.coverImageURL ? (
+                <img src={post.coverImageURL} alt={post.title} className="admin-show-thumb" />
+              ) : post.type === 'video' && post.youtubeId ? (
+                <img
+                  src={`https://i.ytimg.com/vi/${post.youtubeId}/hqdefault.jpg`}
+                  alt={post.title}
+                  className="admin-show-thumb"
+                />
+              ) : (
+                <div className="admin-show-thumb-placeholder">No image</div>
+              )}
+              <div className="admin-show-fields">
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Post title"
+                  value={post.title}
+                  onChange={e => handleField(post, { title: e.target.value })}
+                />
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Short excerpt (shown on the card)"
+                  value={post.excerpt}
+                  onChange={e => handleField(post, { excerpt: e.target.value })}
+                />
+                <div className="admin-show-row-fields-grid">
+                  <select
+                    className="input"
+                    value={post.type}
+                    onChange={e => handleField(post, { type: e.target.value as PostType })}
+                    style={{ appearance: 'auto' }}
+                  >
+                    <option value="text">Text</option>
+                    <option value="video">YouTube video</option>
+                  </select>
+                  <label className="btn btn-ghost" style={{ fontSize: '0.7rem', padding: '6px 10px', textAlign: 'center', cursor: 'pointer' }}>
+                    {busyId === post.id ? 'Uploading…' : 'Replace cover'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={e => handleReplaceImage(post, e)}
+                    />
+                  </label>
+                </div>
+                {post.type === 'text' ? (
+                  <textarea
+                    className="input"
+                    rows={5}
+                    placeholder="Post body. Separate paragraphs with a blank line."
+                    value={post.body}
+                    onChange={e => handleField(post, { body: e.target.value })}
+                  />
+                ) : (
+                  <>
+                    <input
+                      className="input"
+                      type="text"
+                      placeholder="YouTube ID (current)"
+                      value={post.youtubeId}
+                      readOnly
+                    />
+                    <input
+                      className="input"
+                      type="text"
+                      placeholder="Paste new iframe / URL to change"
+                      onBlur={e => {
+                        if (e.target.value.trim()) {
+                          handleYouTubeUpdate(post, e.target.value);
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                    <textarea
+                      className="input"
+                      rows={3}
+                      placeholder="Optional caption / description shown below the video"
+                      value={post.body}
+                      onChange={e => handleField(post, { body: e.target.value })}
+                    />
+                  </>
+                )}
+              </div>
+              <div className="admin-show-actions">
+                <button
+                  className={`admin-show-toggle ${post.active ? 'active' : ''}`}
+                  onClick={() => handleField(post, { active: !post.active })}
+                >
+                  {post.active ? 'Active' : 'Hidden'}
+                </button>
+                <button className="admin-reject-btn" onClick={() => handleDelete(post)} disabled={busyId === post.id}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add new post */}
+      <div className="admin-show-add">
+        <h4>Add Post</h4>
+        <select
+          className="input"
+          value={newType}
+          onChange={e => setNewType(e.target.value as PostType)}
+          style={{ appearance: 'auto' }}
+        >
+          <option value="text">Text post</option>
+          <option value="video">YouTube video post</option>
+        </select>
+        <input
+          className="input"
+          type="text"
+          placeholder="Post title"
+          value={newTitle}
+          onChange={e => setNewTitle(e.target.value)}
+        />
+        <input
+          className="input"
+          type="text"
+          placeholder="Short excerpt (shown on the card)"
+          value={newExcerpt}
+          onChange={e => setNewExcerpt(e.target.value)}
+        />
+        {newType === 'text' ? (
+          <textarea
+            className="input"
+            rows={6}
+            placeholder="Post body. Separate paragraphs with a blank line."
+            value={newBody}
+            onChange={e => setNewBody(e.target.value)}
+          />
+        ) : (
+          <>
+            <textarea
+              className="input"
+              rows={3}
+              placeholder='Paste a YouTube iframe (e.g. <iframe src="https://www.youtube.com/embed/g9Fkfmk03Qg ...">) or watch URL'
+              value={newYouTubeInput}
+              onChange={e => setNewYouTubeInput(e.target.value)}
+            />
+            <textarea
+              className="input"
+              rows={3}
+              placeholder="Optional caption / description shown below the video"
+              value={newBody}
+              onChange={e => setNewBody(e.target.value)}
+            />
+          </>
+        )}
+        <input
+          ref={fileInputRef}
+          className="input"
+          type="file"
+          accept="image/*"
+          onChange={e => setNewFile(e.target.files?.[0] ?? null)}
+        />
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '-4px 0 4px' }}>
+          Cover image is optional. For video posts, the YouTube thumbnail is used if no cover is uploaded.
+        </p>
+        <button className="btn btn-primary" onClick={handleCreate} disabled={creating}>
+          {creating ? 'Adding…' : 'Add Post'}
+        </button>
+      </div>
+
+      {message && <div className="admin-message" style={{ marginTop: 12 }}>{message}</div>}
+    </div>
+  );
 }
 
 function formatDate(date: Date): string {

@@ -89,6 +89,7 @@
 }
 
 /* ---------- Header chrome ---------- */
+
 .mm-eyebrow {
   position: relative;
   z-index: 3;
@@ -141,6 +142,20 @@
   gap: var(--mm-card-gap);
   width: 100%;
   height: var(--mm-banner-h);
+}
+
+/* When only one mover is starred, don't let the tile stretch across
+   the full banner — keep it at a sensible card width (parent flex
+   `justify-content: center` handles the horizontal centring). */
+.mm-card:only-child .mm-tile {
+  width: clamp(320px, 30vw, 480px);
+}
+
+/* Single-mover mode: drop the parallelogram clip on the background
+   image so the show poster reads as a normal rectangle, not sheared. */
+.mm-card:only-child .mm-pane-bg {
+  inset: 0;
+  clip-path: none;
 }
 
 /* ---------- Card (flex item, holds one glass pane + tile) ---------- */
@@ -536,7 +551,15 @@
 }
 
 /* ---------- Responsive ---------- */
+@media (min-width:900px) {
+    .mm-container-float{
+  position: absolute;
+  top:20px;
+}
+  
+}
 @media (max-width: 900px) {
+
   .mm-carousel {
     --mm-shear: 9deg;
     --mm-banner-h: clamp(340px, 60vw, 440px);
@@ -546,6 +569,10 @@
   }
 }
 @media (max-width: 640px) {
+  .mm-container-float{
+  position: absolute;
+  top:-10px;
+}
   .mm-carousel {
     --mm-shear: 7deg;
     --mm-banner-h: 420px;

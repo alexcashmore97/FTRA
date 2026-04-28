@@ -16,6 +16,12 @@ service firebase.storage {
       allow write: if isAdmin();
     }
 
+    // Post cover images: public read, admin write
+    match /posts/{postId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Default: deny all
     match /{allPaths=**} {
       allow read, write: if false;
