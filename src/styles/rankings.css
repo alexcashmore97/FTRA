@@ -468,6 +468,7 @@
     padding: 12px 14px;
   }
   .ranking-arrow { display: none; }
+  .ranking-instagram { display: none; } /* glitchy on mobile — profile page still links it */
   .ranking-fighter-photo { width: 40px; height: 40px; }
 
   .ranking-fighter-name {
